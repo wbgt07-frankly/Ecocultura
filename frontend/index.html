@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1C4220">
+  <title>АгрономФото — ЭКО Культура</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+
+<!-- ── Screen 1: Landing ─────────────────────────────────────── -->
+<section id="screen-landing" class="screen active">
+  <div class="land-bg">
+    <video class="land-bg-img" autoplay muted loop playsinline>
+      <source src="/startvideo.mp4" type="video/mp4">
+      <img src="/api/thumb/female_1" class="land-bg-img" alt="" onerror="this.style.opacity=0">
+    </video>
+    <div class="land-grad-top"></div>
+    <div class="land-grad-bot"></div>
+  </div>
+  <div class="land-top-bar">
+    <img src="/Logotype.png" class="logo-img logo-img-light" alt="ЭКО Культура">
+    <div class="live-badge"><span class="live-dot"></span>Теплица ЭКО Культуры</div>
+  </div>
+  <div class="land-sheet">
+    <div class="handle"></div>
+    <h1 class="land-h1">Стань агрономом <span class="lime">ЭКО Культуры</span></h1>
+    <p class="land-p">Загрузи фото — получи брендированную открытку из теплицы</p>
+    <div class="pill-badges">
+      <span class="pbadge"><span class="bdot"></span>Без ГМО</span>
+      <span class="pbadge"><span class="bdot"></span>Без нитратов</span>
+    </div>
+    <button class="btn lime" id="btn-start">
+      Сделать фото
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 10h12M12 5l5 5-5 5"/></svg>
+    </button>
+    <p class="micro">Фото не сохраняются · Обработка моментальная</p>
+  </div>
+</section>
+
+<!-- ── Screen 2: Upload ──────────────────────────────────────── -->
+<section id="screen-upload" class="screen white-s">
+  <div class="s-head">
+    <button class="back-btn" id="btn-back-upload">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 3L5 9l6 6"/></svg>
+    </button>
+    <div class="stepdots"><span class="sd on"></span><span class="sd"></span><span class="sd"></span></div>
+    <img src="/Logotype.png" class="logo-img" alt="ЭКО Культура">
+  </div>
+  <div class="s-body">
+    <h2 class="s-title">Загрузи своё фото</h2>
+    <p class="s-sub">Лицо должно быть хорошо видно</p>
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" accept="image/*" hidden>
+      <div id="upload-placeholder" class="upload-ph">
+        <div class="uph-ic">
+          <svg width="34" height="34" viewBox="0 0 36 36" fill="none"><path d="M18 6v16M10 14l8-8 8 8" stroke="#7DC242" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 28h24" stroke="#1C4220" stroke-width="2" stroke-linecap="round" opacity="0.3"/></svg>
+        </div>
+        <p class="uph-lbl">Нажми, чтобы выбрать</p>
+        <p class="uph-hint">JPG, PNG, WebP · до 10 МБ</p>
+      </div>
+      <img id="photo-preview" class="photo-preview hidden" alt="Предпросмотр">
+    </div>
+    <button class="btn lime" id="btn-selfie">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Сделать селфи
+    </button>
+  </div>
+  <div class="s-foot">
+    <button class="btn dark" id="btn-next-upload" disabled>Далее →</button>
+    <p class="micro dark">🔒 Фото удаляется сразу после обработки</p>
+  </div>
+
+  <!-- Tip sheet -->
+  <div id="tip-sheet" class="tip-sheet hidden">
+    <div class="tip-bg" id="tip-backdrop"></div>
+    <div class="tip-box">
+      <div class="handle dark"></div>
+      <h3 class="tip-h">Для лучшего результата</h3>
+      <p class="tip-p">Прочитай советы перед тем, как сделать селфи</p>
+      <div class="tips-list">
+        <div class="tip-row"><div class="tip-em">👁</div><div><b>Лицо в камеру</b><br><small>Смотри прямо в объектив</small></div></div>
+        <div class="tip-row"><div class="tip-em">☀️</div><div><b>Хорошее освещение</b><br><small>Встань лицом к свету, без теней</small></div></div>
+        <div class="tip-row"><div class="tip-em">🎯</div><div><b>Одно лицо</b><br><small>Только ты в кадре, крупным планом</small></div></div>
+      </div>
+      <button class="btn dark" id="btn-tip-ok">Готов — делаю селфи</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Screen 3: Choose character ────────────────────────────── -->
+<section id="screen-choose" class="screen white-s">
+  <div class="s-head">
+    <button class="back-btn" id="btn-back-choose">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 3L5 9l6 6"/></svg>
+    </button>
+    <div class="stepdots"><span class="sd done">✓</span><span class="sd on"></span><span class="sd"></span></div>
+    <img src="/Logotype.png" class="logo-img" alt="ЭКО Культура">
+  </div>
+  <div class="s-body">
+    <h2 class="s-title">Выбери образ</h2>
+    <p class="s-sub">Нажми на карточку, чтобы выбрать</p>
+    <div class="featured-card" id="featured-card">
+      <img id="featured-img" src="" alt="" class="featured-img">
+      <div class="feat-badge"><span class="bdot"></span>Выбрано</div>
+      <div class="feat-overlay"><p class="feat-lbl" id="featured-label"></p></div>
+    </div>
+    <div id="no-images-msg" class="hidden emsg">Базовые изображения не найдены.<br>Добавьте файлы в <code>backend/assets/base_images/</code></div>
+    <div class="thumb-strip" id="base-grid"></div>
+  </div>
+  <div class="s-foot">
+    <button class="btn lime" id="btn-generate" disabled>
+      Создать фото
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 10h12M12 5l5 5-5 5"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ── Screen 4: Processing ──────────────────────────────────── -->
+<section id="screen-processing" class="screen proc-screen">
+  <img id="proc-bg" class="proc-bg" src="" alt="">
+  <div class="proc-center">
+    <div class="spin-wrap">
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#7DC242" stroke-width="6"
+          stroke-dasharray="327" stroke-dashoffset="200" stroke-linecap="round" class="spin-arc"/>
+      </svg>
+      <div class="spin-inner">
+        <svg width="44" height="40" viewBox="0 0 52 48" fill="none"><ellipse cx="26" cy="32" rx="10" ry="14" fill="#7DC242"/><ellipse cx="14" cy="22" rx="10" ry="14" fill="#7DC242" transform="rotate(-40 14 22)"/><ellipse cx="38" cy="22" rx="10" ry="14" fill="#7DC242" transform="rotate(40 38 22)"/></svg>
+      </div>
+    </div>
+    <h2 class="proc-h">Создаём твоё фото</h2>
+    <p class="proc-msg" id="processing-msg">Накладываем твоё лицо на фото агронома...</p>
+    <div class="pbar-wrap"><div class="pbar-fill"></div></div>
+    <p class="ptime">Обычно 5–10 секунд</p>
+    <div class="fact-card">
+      <div class="fact-lbl">ЗНАЕШЬ ЛИ ТЫ?</div>
+      <p class="fact-txt">Томаты ЭКО Культуры выращивают без ГМО и нитратов в теплицах по всей России</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Screen 5: Result ──────────────────────────────────────── -->
+<section id="screen-result" class="screen result-screen">
+  <canvas id="result-canvas" class="result-canvas"></canvas>
+  <div class="res-top-bar">
+    <div class="res-top-grad"><span class="res-ready">Готово 🎉</span></div>
+  </div>
+  <div class="res-sheet">
+    <div class="handle"></div>
+    <h2 class="rs-h">Твоё фото готово!</h2>
+    <p class="rs-p">Сохрани или поделись с друзьями</p>
+    <div class="bubble-section">
+      <label class="bubble-label">💬 Добавить реплику</label>
+      <textarea id="bubble-text" class="bubble-input" placeholder="Например: Знаю всё о томатах!" maxlength="120" rows="2"></textarea>
+      <div class="bubble-positions">
+        <button class="pos-btn active" data-pos="top-left">↖ Лево</button>
+        <button class="pos-btn" data-pos="top-right">↗ Право</button>
+        <button class="pos-btn" data-pos="bottom-left">↙ Низ</button>
+      </div>
+    </div>
+    <button class="btn lime" id="btn-download">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v13M5 14l7 7 7-7"/></svg>
+      Сохранить в галерею
+    </button>
+    <div class="rs-row">
+      <button class="btn outw" id="btn-share">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Поделиться
+      </button>
+      <button class="btn outw" id="btn-restart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.32"/></svg>
+        Другой образ
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Screen: Error ─────────────────────────────────────────── -->
+<section id="screen-error" class="screen white-s center-s">
+  <div class="err-ic">⚠️</div>
+  <h2 class="s-title">Что-то пошло не так</h2>
+  <p class="error-detail" id="error-detail">Попробуйте другое фото.</p>
+  <button class="btn dark" id="btn-error-retry">Попробовать снова</button>
+</section>
+
+<script src="app.js?v=3"></script>
+</body>
+</html>

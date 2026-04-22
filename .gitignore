@@ -1,0 +1,13 @@
+# Python
+backend/venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# ML models (большие файлы, скачиваются отдельно)
+backend/models/
+
+# Системное
+.DS_Store
+*.log
