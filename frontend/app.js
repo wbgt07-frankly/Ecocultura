@@ -328,8 +328,19 @@ function getCanvasBlob() {
 
 document.getElementById('btn-download').addEventListener('click', async () => {
   const blob = await getCanvasBlob();
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
+  const file = new File([blob], 'eco-kultura-agronom.jpg', { type: 'image/jpeg' });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: 'Я — агроном ЭКО Культуры!' });
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+
+  const url = URL.createObjectURL(blob);
+  const a   = document.createElement('a');
   a.href     = url;
   a.download = 'eco-kultura-agronom.jpg';
   a.click();
