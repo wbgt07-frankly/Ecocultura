@@ -53,9 +53,9 @@ def init_models():
     inswapper_path = os.path.join(MODELS_DIR, "models", "inswapper_128.onnx")
     _download_if_missing(inswapper_path, INSWAPPER_URL, "inswapper_128.onnx")
 
-    logger.info("Загрузка face analyzer (buffalo_sc)...")
-    _analyzer = FaceAnalysis(name="buffalo_sc", root=MODELS_DIR)
-    _analyzer.prepare(ctx_id=-1, det_size=(320, 320))
+    logger.info("Загрузка face analyzer (buffalo_l)...")
+    _analyzer = FaceAnalysis(name="buffalo_l", root=MODELS_DIR)
+    _analyzer.prepare(ctx_id=-1, det_size=(640, 640))
 
     logger.info("Загрузка inswapper_128...")
     _swapper = insightface.model_zoo.get_model(inswapper_path, root=MODELS_DIR)
