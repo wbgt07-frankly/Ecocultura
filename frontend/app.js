@@ -202,8 +202,6 @@ function drawResult() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(resultImg, 0, 0);
 
-  const text = document.getElementById('bubble-text').value.trim();
-  if (text) drawBubble(ctx, text, bubblePos, canvas.width, canvas.height);
 }
 
 // ── Speech bubble ─────────────────────────────────────
@@ -307,16 +305,6 @@ function wrapText(ctx, text, maxWidth) {
 
 // ── Bubble controls ───────────────────────────────────
 
-document.getElementById('bubble-text').addEventListener('input', drawResult);
-
-document.querySelectorAll('.pos-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    bubblePos = btn.dataset.pos;
-    drawResult();
-  });
-});
 
 // ── Download & Share ──────────────────────────────────
 
@@ -401,9 +389,6 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   const canvas = document.getElementById('result-canvas');
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 
-  document.getElementById('bubble-text').value = '';
-  document.querySelectorAll('.pos-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
-  bubblePos = 'top-left';
 
   showScreen('screen-landing');
 });
