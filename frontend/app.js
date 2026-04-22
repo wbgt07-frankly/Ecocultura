@@ -13,7 +13,6 @@ let selectedBaseId = null;
 let baseImages     = [];
 let resultBlob     = null;
 let resultImg      = null;
-let bubblePos      = 'top-left';
 let processingInterval = null;
 
 // ── Screens ──────────────────────────────────────────
@@ -191,7 +190,6 @@ async function showResult(blob) {
   canvas.width  = resultImg.naturalWidth;
   canvas.height = resultImg.naturalHeight;
 
-  document.getElementById('bubble-text').value = '';
   drawResult();
   showScreen('screen-result');
 }
