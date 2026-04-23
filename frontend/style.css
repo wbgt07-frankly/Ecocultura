@@ -284,6 +284,7 @@ html, body {
   flex: 1;
   border-radius: 28px;
   border: none;
+  margin-bottom: 14px;
   background: rgba(125,194,66,0.06);
   display: flex;
   align-items: center;
