@@ -7,7 +7,7 @@
   <title>АгрономФото — ЭКО Культура</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
@@ -86,14 +86,12 @@
   </div>
   <div class="s-body">
     <h2 class="s-title">Выбери образ</h2>
-    <p class="s-sub">Нажми на карточку, чтобы выбрать</p>
-    <div class="featured-card" id="featured-card">
-      <img id="featured-img" src="" alt="" class="featured-img">
-      <div class="feat-badge"><span class="bdot"></span>Выбрано</div>
-      <div class="feat-overlay"><p class="feat-lbl" id="featured-label"></p></div>
+    <p class="s-sub">Листай влево или вправо</p>
+    <div class="carousel-wrap" id="carousel-wrap">
+      <div class="carousel-track" id="carousel-track"></div>
     </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
     <div id="no-images-msg" class="hidden emsg">Базовые изображения не найдены.<br>Добавьте файлы в <code>backend/assets/base_images/</code></div>
-    <div class="thumb-strip" id="base-grid"></div>
   </div>
   <div class="s-foot">
     <button class="btn lime" id="btn-generate" disabled>
@@ -163,6 +161,6 @@
   <button class="btn dark" id="btn-error-retry">Попробовать снова</button>
 </section>
 
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

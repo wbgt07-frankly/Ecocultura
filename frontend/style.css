@@ -343,80 +343,65 @@ html, body {
 
 
 /* ─────────────────────────────────────────
-   Screen 3 · Choose
+   Screen 3 · Choose — Carousel
 ───────────────────────────────────────── */
 
-/* Featured card — fills remaining space */
-.featured-card {
+.carousel-wrap {
   flex: 1;
   min-height: 0;
-  border-radius: 28px;
   overflow: hidden;
+  border-radius: 28px;
   position: relative;
-  box-shadow: 0 8px 40px rgba(28,66,32,0.18);
-  background: var(--gray);
+  box-shadow: 0 8px 40px rgba(28,66,32,0.14);
 }
-.featured-img {
+.carousel-track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+  transition: transform 0.38s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.carousel-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.carousel-slide img {
   width: 100%; height: 100%;
   object-fit: cover;
   object-position: center top;
   display: block;
 }
-.feat-badge {
-  position: absolute;
-  top: 16px; left: 16px;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(8px);
-  border-radius: 20px;
-  padding: 6px 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--dark);
-}
-.feat-overlay {
+.carousel-slide-lbl {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   background: linear-gradient(0deg, rgba(10,30,12,0.88) 0%, transparent 100%);
-  padding: 32px 20px 20px;
-}
-.feat-lbl {
+  padding: 40px 20px 20px;
   font-size: 16px;
   font-weight: 800;
   color: var(--white);
-  min-height: 20px;
 }
-
-/* Thumb strip */
-.thumb-strip {
+.carousel-dots {
   display: flex;
-  gap: 10px;
-  padding: 14px 0 4px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 0 2px;
   flex-shrink: 0;
 }
-.thumb-strip::-webkit-scrollbar { display: none; }
-
-.base-card {
-  width: 60px; height: 72px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 2px solid rgba(28,66,32,0.1);
+.cdot {
+  height: 6px;
+  width: 6px;
+  border-radius: 3px;
+  background: rgba(28,66,32,0.15);
+  transition: all 0.28s cubic-bezier(0.25, 1, 0.5, 1);
   flex-shrink: 0;
-  cursor: pointer;
-  transition: border-color 0.18s, border-width 0.1s;
 }
-.base-card img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
+.cdot.active {
+  width: 20px;
+  background: var(--lime);
 }
-.base-card.selected { border: 2.5px solid var(--lime); }
 .base-card-label { display: none; }
 
 .base-loading { font-size: 13px; color: var(--muted); padding: 16px 0; }

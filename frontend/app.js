@@ -122,56 +122,70 @@ btnSelfie.addEventListener('click', () => {
   cam.click();
 });
 
-// ── Base images ───────────────────────────────────────
+// ── Carousel ──────────────────────────────────────────
+
+let currentSlide = 0;
 
 async function loadBaseImages() {
-  const grid  = document.getElementById('base-grid');
   const noMsg = document.getElementById('no-images-msg');
-  grid.innerHTML = '<span class="base-loading">Загрузка...</span>';
+  const track = document.getElementById('carousel-track');
+  const dotsEl = document.getElementById('carousel-dots');
+
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
 
   try {
     const resp = await fetch('/api/base-images');
-    baseImages  = await resp.json();
+    baseImages = await resp.json();
 
     if (!baseImages.length) {
-      grid.innerHTML = '';
       noMsg.classList.remove('hidden');
       return;
     }
 
-    grid.innerHTML = '';
-    baseImages.forEach(img => {
-      const card = document.createElement('div');
-      card.className = 'base-card';
-      card.dataset.id = img.id;
-      card.innerHTML = `<img src="${img.thumb}" alt="${img.label}" loading="lazy">`;
-      card.addEventListener('click', () => selectBase(img.id));
-      grid.appendChild(card);
+    baseImages.forEach((img, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      slide.innerHTML = `<img src="${img.thumb}" alt="${img.label}" loading="lazy"><div class="carousel-slide-lbl">${img.label}</div>`;
+      track.appendChild(slide);
+
+      const dot = document.createElement('span');
+      dot.className = 'cdot';
+      dotsEl.appendChild(dot);
     });
 
-    selectBase(baseImages[0].id);
+    goToSlide(0);
+    initCarouselSwipe();
 
   } catch {
-    grid.innerHTML = '';
     noMsg.classList.remove('hidden');
   }
 }
 
-function selectBase(id) {
-  selectedBaseId = id;
-
-  const img = baseImages.find(i => i.id === id);
-  if (img) {
-    document.getElementById('featured-img').src = img.thumb;
-    const lbl = document.getElementById('featured-label');
-    if (lbl) lbl.textContent = img.label;
-  }
-
-  document.querySelectorAll('.base-card').forEach(c => {
-    c.classList.toggle('selected', c.dataset.id === id);
-  });
-
+function goToSlide(index) {
+  currentSlide = Math.max(0, Math.min(index, baseImages.length - 1));
+  selectedBaseId = baseImages[currentSlide].id;
+  document.getElementById('carousel-track').style.transform = `translateX(-${currentSlide * 100}%)`;
+  document.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
   document.getElementById('btn-generate').disabled = false;
+}
+
+function initCarouselSwipe() {
+  const wrap = document.getElementById('carousel-wrap');
+  let startX = 0, startY = 0;
+
+  wrap.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  wrap.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      goToSlide(currentSlide + (dx < 0 ? 1 : -1));
+    }
+  }, { passive: true });
 }
 
 // ── Processing animation ──────────────────────────────
