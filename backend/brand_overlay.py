@@ -63,33 +63,55 @@ def _crop_portrait(img: Image.Image) -> Image.Image:
     return img
 
 
+LOGO_PATH = os.path.join(os.path.dirname(BASE_DIR), "frontend", "Logotype.png")
+
+
 def _add_overlay(img: Image.Image) -> Image.Image:
     w, h = img.size
     strip_h = int(h * 0.15)
+    PAD = int(strip_h * 0.12)
 
     overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
     draw.rectangle([(0, h - strip_h), (w, h)], fill=(*DARK_GREEN, 235))
 
-    brand_size = max(22, int(strip_h * 0.36))
-    slogan_size = max(13, int(strip_h * 0.21))
+    text_x_start = PAD
 
-    font_brand = _load_font("Montserrat-Bold.ttf", brand_size)
+    # Logo on the left
+    if os.path.exists(LOGO_PATH):
+        try:
+            logo = Image.open(LOGO_PATH).convert("RGBA")
+            lw, lh = logo.size
+            logo_h = strip_h - 2 * PAD
+            logo_w = int(logo_h * lw / lh)
+            logo = logo.resize((logo_w, logo_h), Image.LANCZOS)
+            logo_x = PAD
+            logo_y = h - strip_h + PAD
+            overlay.paste(logo, (logo_x, logo_y), logo)
+
+            div_x = logo_x + logo_w + PAD
+            draw.line(
+                [(div_x, h - strip_h + PAD * 2), (div_x, h - PAD * 2)],
+                fill=(*LIME_GREEN, 160),
+                width=max(1, int(strip_h * 0.015)),
+            )
+            text_x_start = div_x + PAD
+        except Exception as e:
+            logger.warning(f"Не удалось добавить логотип: {e}")
+
+    # Slogan text
+    slogan_text = "ЭКО-Культура — овощи которым я доверяю"
+    text_area_w = w - text_x_start - PAD
+    slogan_size = max(13, int(strip_h * 0.22))
     font_slogan = _load_font("Montserrat-Regular.ttf", slogan_size)
 
-    brand_text = "ЭКО КУЛЬТУРА"
-    slogan_text = "овощи, в которых уверен"
-
-    bb = draw.textbbox((0, 0), brand_text, font=font_brand)
-    x = (w - (bb[2] - bb[0])) // 2
-    y = h - strip_h + int(strip_h * 0.1)
-    draw.text((x, y), brand_text, fill=WHITE, font=font_brand)
-
     bs = draw.textbbox((0, 0), slogan_text, font=font_slogan)
-    xs = (w - (bs[2] - bs[0])) // 2
-    ys = y + brand_size + int(strip_h * 0.06)
-    draw.text((xs, ys), slogan_text, fill=(*LIME_GREEN, 230), font=font_slogan)
+    tw = bs[2] - bs[0]
+    th = bs[3] - bs[1]
+    xs = text_x_start + max(0, (text_area_w - tw) // 2)
+    ys = h - strip_h + (strip_h - th) // 2
+    draw.text((xs, ys), slogan_text, fill=WHITE, font=font_slogan)
 
     img_rgba = img.convert("RGBA")
     result = Image.alpha_composite(img_rgba, overlay)
