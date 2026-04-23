@@ -225,13 +225,11 @@ function startProcessingAnimation() {
 
   processingInterval = setInterval(() => {
     i = (i + 1) % PROCESSING_MESSAGES.length;
-    el.style.opacity = '0';
+    el.className = 'proc-msg msg-out';
     setTimeout(() => {
       el.textContent = PROCESSING_MESSAGES[i];
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        el.style.opacity = '1';
-      }));
-    }, 360);
+      el.className = 'proc-msg msg-in';
+    }, 280);
   }, 3000);
 }
 
