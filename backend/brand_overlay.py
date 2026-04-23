@@ -100,18 +100,26 @@ def _add_overlay(img: Image.Image) -> Image.Image:
         except Exception as e:
             logger.warning(f"Не удалось добавить логотип: {e}")
 
-    # Slogan text
-    slogan_text = "ЭКО-Культура — овощи которым я доверяю"
+    # Slogan text — two lines
+    line1 = "ЭКО-Культура —"
+    line2 = "овощи которым я доверяю"
     text_area_w = w - text_x_start - PAD
-    slogan_size = max(13, int(strip_h * 0.22))
+    slogan_size = max(11, int(strip_h * 0.19))
     font_slogan = _load_font("Montserrat-Regular.ttf", slogan_size)
 
-    bs = draw.textbbox((0, 0), slogan_text, font=font_slogan)
-    tw = bs[2] - bs[0]
-    th = bs[3] - bs[1]
-    xs = text_x_start + max(0, (text_area_w - tw) // 2)
-    ys = h - strip_h + (strip_h - th) // 2
-    draw.text((xs, ys), slogan_text, fill=WHITE, font=font_slogan)
+    b1 = draw.textbbox((0, 0), line1, font=font_slogan)
+    b2 = draw.textbbox((0, 0), line2, font=font_slogan)
+    lh1 = b1[3] - b1[1]
+    lh2 = b2[3] - b2[1]
+    gap = max(2, int(strip_h * 0.04))
+    block_h = lh1 + gap + lh2
+    ys = h - strip_h + (strip_h - block_h) // 2
+
+    for line, b in ((line1, b1), (line2, b2)):
+        lw = b[2] - b[0]
+        xs = text_x_start + max(0, (text_area_w - lw) // 2)
+        draw.text((xs, ys), line, fill=WHITE, font=font_slogan)
+        ys += (lh1 if line == line1 else 0) + gap
 
     img_rgba = img.convert("RGBA")
     result = Image.alpha_composite(img_rgba, overlay)
