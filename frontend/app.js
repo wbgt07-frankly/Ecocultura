@@ -217,20 +217,7 @@ function completeProgressBar() {
 }
 
 function startProcessingAnimation() {
-  const el = document.getElementById('processing-msg');
-  let i = 0;
-  el.style.opacity = '1';
-  el.textContent = PROCESSING_MESSAGES[0];
   startProgressBar();
-
-  processingInterval = setInterval(() => {
-    i = (i + 1) % PROCESSING_MESSAGES.length;
-    el.className = 'proc-msg msg-out';
-    setTimeout(() => {
-      el.textContent = PROCESSING_MESSAGES[i];
-      el.className = 'proc-msg msg-in';
-    }, 280);
-  }, 3000);
 }
 
 function stopProcessingAnimation() {
