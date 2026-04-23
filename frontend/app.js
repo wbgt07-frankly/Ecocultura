@@ -70,6 +70,7 @@ const btnNextUpload = document.getElementById('btn-next-upload');
 const btnSelfie     = document.getElementById('btn-selfie');
 const btnCancelPhoto = document.getElementById('btn-cancel-photo');
 const uploadMicro   = document.getElementById('upload-micro');
+const uploadFoot    = document.getElementById('upload-foot');
 
 function handlePhotoFile(file) {
   userPhotoFile = file;
@@ -81,7 +82,7 @@ function handlePhotoFile(file) {
     btnCancelPhoto.classList.remove('hidden');
     btnSelfie.classList.add('hidden');
     uploadMicro.classList.add('hidden');
-    btnNextUpload.classList.remove('hidden');
+    uploadFoot.classList.remove('hidden');
   };
   reader.readAsDataURL(file);
 }
@@ -93,7 +94,7 @@ function resetUploadScreen() {
   preview.classList.add('hidden');
   placeholder.classList.remove('hidden');
   btnCancelPhoto.classList.add('hidden');
-  btnNextUpload.classList.add('hidden');
+  uploadFoot.classList.add('hidden');
   btnSelfie.classList.remove('hidden');
   uploadMicro.classList.remove('hidden');
 }
