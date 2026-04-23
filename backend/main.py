@@ -1,3 +1,4 @@
+import io
 import os
 import logging
 from contextlib import asynccontextmanager
@@ -6,6 +7,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
+from PIL import Image
 
 import brand_overlay as bo
 import face_swap as fs
@@ -59,17 +61,25 @@ async def get_base_images():
     return result
 
 
+_thumb_cache: dict[str, bytes] = {}
+
 @app.get("/api/thumb/{image_id}")
 async def get_thumb(image_id: str):
     if image_id not in BASE_IMAGES:
         raise HTTPException(404)
+    if image_id in _thumb_cache:
+        return Response(content=_thumb_cache[image_id], media_type="image/jpeg",
+                        headers={"Cache-Control": "public, max-age=86400"})
     path = os.path.join(BASE_IMAGES_DIR, BASE_IMAGES[image_id]["file"])
     if not os.path.exists(path):
         raise HTTPException(404)
-    with open(path, "rb") as f:
-        data = f.read()
-    ext = os.path.splitext(path)[1].lower()
-    return Response(content=data, media_type=MIME.get(ext, "image/jpeg"))
+    img = Image.open(path).convert("RGB")
+    img.thumbnail((600, 1200), Image.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=82, optimize=True)
+    _thumb_cache[image_id] = buf.getvalue()
+    return Response(content=_thumb_cache[image_id], media_type="image/jpeg",
+                    headers={"Cache-Control": "public, max-age=86400"})
 
 
 @app.post("/api/swap")

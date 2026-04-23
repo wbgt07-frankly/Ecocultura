@@ -146,7 +146,7 @@ async function loadBaseImages() {
     baseImages.forEach((img, i) => {
       const slide = document.createElement('div');
       slide.className = 'carousel-slide';
-      slide.innerHTML = `<img src="${img.thumb}" alt="${img.label}" loading="lazy"><div class="carousel-slide-lbl">${img.label}</div>`;
+      slide.innerHTML = `<img src="${img.thumb}" alt="${img.label}"><div class="carousel-slide-lbl">${img.label}</div>`;
       track.appendChild(slide);
 
       const dot = document.createElement('span');
