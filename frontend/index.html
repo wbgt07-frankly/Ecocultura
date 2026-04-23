@@ -47,27 +47,28 @@
     <img src="/Logotype.png" class="logo-img" alt="ЭКО Культура">
   </div>
   <div class="s-body">
-    <h2 class="s-title">Загрузи своё фото</h2>
-    <p class="s-sub">Лицо должно быть хорошо видно</p>
+    <h2 class="s-title">Поделитесь Вашим селфи</h2>
+    <p class="s-sub">Должно быть хорошо видно лицо</p>
     <div class="upload-zone" id="upload-zone">
       <input type="file" id="file-input" accept="image/*" hidden>
       <div id="upload-placeholder" class="upload-ph">
         <div class="uph-ic">
-          <svg width="34" height="34" viewBox="0 0 36 36" fill="none"><path d="M18 6v16M10 14l8-8 8 8" stroke="#7DC242" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 28h24" stroke="#1C4220" stroke-width="2" stroke-linecap="round" opacity="0.3"/></svg>
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="4" y="5" width="28" height="26" rx="5" stroke="#7DC242" stroke-width="2.5"/><circle cx="18" cy="15" r="5" stroke="#7DC242" stroke-width="2.2"/><path d="M8 31c0-5.5 4.5-9 10-9s10 3.5 10 9" stroke="#7DC242" stroke-width="2.2" stroke-linecap="round"/></svg>
         </div>
-        <p class="uph-lbl">Нажми, чтобы выбрать</p>
+        <p class="uph-lbl">Загрузите или сделайте селфи</p>
         <p class="uph-hint">JPG, PNG, WebP · до 10 МБ</p>
       </div>
       <img id="photo-preview" class="photo-preview hidden" alt="Предпросмотр">
+      <button class="cancel-photo hidden" id="btn-cancel-photo">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+      </button>
     </div>
     <button class="btn lime" id="btn-selfie">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       Сделать селфи
     </button>
-  </div>
-  <div class="s-foot">
-    <button class="btn dark" id="btn-next-upload" disabled>Далее →</button>
-    <p class="micro dark">🔒 Фото удаляется сразу после обработки</p>
+    <p class="micro dark" id="upload-micro">Мы не храним Ваши фотографии</p>
+    <button class="btn dark hidden" id="btn-next-upload">Далее →</button>
   </div>
 
   <!-- Tip sheet -->

@@ -283,8 +283,8 @@ html, body {
 .upload-zone {
   flex: 1;
   border-radius: 28px;
-  border: 2px dashed rgba(125,194,66,0.45);
-  background: rgba(125,194,66,0.04);
+  border: none;
+  background: rgba(125,194,66,0.06);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -292,9 +292,9 @@ html, body {
   position: relative;
   overflow: hidden;
   min-height: 200px;
-  transition: border-color 0.2s, background 0.2s;
+  transition: background 0.2s;
 }
-.upload-zone:hover { background: rgba(125,194,66,0.08); border-color: rgba(125,194,66,0.7); }
+.upload-zone:hover { background: rgba(125,194,66,0.1); }
 
 .upload-ph {
   display: flex;
@@ -322,6 +322,23 @@ html, body {
   display: block;
 }
 .photo-preview.hidden { display: none !important; }
+
+.cancel-photo {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  z-index: 2;
+}
+.cancel-photo.hidden { display: none !important; }
 
 /* Tip sheet */
 .tip-sheet {

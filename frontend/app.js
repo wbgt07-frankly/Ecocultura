@@ -67,6 +67,9 @@ const fileInput     = document.getElementById('file-input');
 const preview       = document.getElementById('photo-preview');
 const placeholder   = document.getElementById('upload-placeholder');
 const btnNextUpload = document.getElementById('btn-next-upload');
+const btnSelfie     = document.getElementById('btn-selfie');
+const btnCancelPhoto = document.getElementById('btn-cancel-photo');
+const uploadMicro   = document.getElementById('upload-micro');
 
 function handlePhotoFile(file) {
   userPhotoFile = file;
@@ -75,14 +78,34 @@ function handlePhotoFile(file) {
     preview.src = e.target.result;
     preview.classList.remove('hidden');
     placeholder.classList.add('hidden');
-    btnNextUpload.disabled = false;
+    btnCancelPhoto.classList.remove('hidden');
+    btnSelfie.classList.add('hidden');
+    uploadMicro.classList.add('hidden');
+    btnNextUpload.classList.remove('hidden');
   };
   reader.readAsDataURL(file);
+}
+
+function resetUploadScreen() {
+  userPhotoFile = null;
+  fileInput.value = '';
+  preview.src = '';
+  preview.classList.add('hidden');
+  placeholder.classList.remove('hidden');
+  btnCancelPhoto.classList.add('hidden');
+  btnNextUpload.classList.add('hidden');
+  btnSelfie.classList.remove('hidden');
+  uploadMicro.classList.remove('hidden');
 }
 
 uploadZone.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', () => {
   if (fileInput.files[0]) handlePhotoFile(fileInput.files[0]);
+});
+
+btnCancelPhoto.addEventListener('click', e => {
+  e.stopPropagation();
+  resetUploadScreen();
 });
 
 // ── Tip sheet (selfie tips) ───────────────────────────
@@ -299,20 +322,17 @@ document.getElementById('btn-next-upload').addEventListener('click', () => {
 document.getElementById('btn-back-upload').addEventListener('click', () => showScreen('screen-landing'));
 document.getElementById('btn-back-choose').addEventListener('click', () => showScreen('screen-upload'));
 document.getElementById('btn-generate').addEventListener('click', doSwap);
-document.getElementById('btn-error-retry').addEventListener('click', () => showScreen('screen-upload'));
+document.getElementById('btn-error-retry').addEventListener('click', () => {
+  resetUploadScreen();
+  showScreen('screen-upload');
+});
 
 document.getElementById('btn-restart').addEventListener('click', () => {
-  userPhotoFile  = null;
+  resetUploadScreen();
   selectedBaseId = null;
   resultBlob     = null;
   resultImg      = null;
   baseImages     = [];
-
-  fileInput.value = '';
-  preview.src     = '';
-  preview.classList.add('hidden');
-  placeholder.classList.remove('hidden');
-  btnNextUpload.disabled = true;
 
   document.getElementById('proc-bg').src = '';
   document.getElementById('featured-img').src = '';
