@@ -155,7 +155,6 @@ async function loadBaseImages() {
     });
 
     goToSlide(0);
-    initCarouselSwipe();
 
   } catch {
     noMsg.classList.remove('hidden');
@@ -170,7 +169,8 @@ function goToSlide(index) {
   document.getElementById('btn-generate').disabled = false;
 }
 
-function initCarouselSwipe() {
+// Swipe listeners — set up once at page load
+(function initCarouselSwipe() {
   const wrap = document.getElementById('carousel-wrap');
   let startX = 0, startY = 0;
 
@@ -186,7 +186,7 @@ function initCarouselSwipe() {
       goToSlide(currentSlide + (dx < 0 ? 1 : -1));
     }
   }, { passive: true });
-}
+})();
 
 // ── Processing animation ──────────────────────────────
 
