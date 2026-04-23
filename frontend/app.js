@@ -226,12 +226,13 @@ function startProcessingAnimation() {
   processingInterval = setInterval(() => {
     i = (i + 1) % PROCESSING_MESSAGES.length;
     el.style.opacity = '0';
-    el.addEventListener('transitionend', function handler() {
-      el.removeEventListener('transitionend', handler);
+    setTimeout(() => {
       el.textContent = PROCESSING_MESSAGES[i];
-      el.style.opacity = '1';
-    }, { once: true });
-  }, 2800);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.style.opacity = '1';
+      }));
+    }, 360);
+  }, 3000);
 }
 
 function stopProcessingAnimation() {

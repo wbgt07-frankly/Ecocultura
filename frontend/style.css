@@ -465,7 +465,7 @@ html, body {
   text-align: center;
   line-height: 1.6;
   min-height: 22px;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.28s ease;
 }
 .pbar-wrap {
   width: 100%;
