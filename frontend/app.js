@@ -196,17 +196,14 @@ const PBAR_DURATION_MS = 12000;
 
 function startProgressBar() {
   const fill = document.querySelector('.pbar-fill');
-  const fillRect = document.getElementById('tomato-fill-level');
   fill.style.transition = 'none';
   fill.style.width = '0%';
-  if (fillRect) fillRect.setAttribute('y', '80');
   pbarStartTime = performance.now();
 
   function tick(now) {
     const t = Math.min((now - pbarStartTime) / PBAR_DURATION_MS, 1);
     const eased = 1 - Math.pow(1 - t, 3);
     fill.style.width = (eased * 88) + '%';
-    if (fillRect) fillRect.setAttribute('y', String(80 - eased * 56));
     if (t < 1) pbarRAF = requestAnimationFrame(tick);
   }
   pbarRAF = requestAnimationFrame(tick);
@@ -215,10 +212,8 @@ function startProgressBar() {
 function completeProgressBar() {
   if (pbarRAF) { cancelAnimationFrame(pbarRAF); pbarRAF = null; }
   const fill = document.querySelector('.pbar-fill');
-  const fillRect = document.getElementById('tomato-fill-level');
   fill.style.transition = 'width 0.5s ease-out';
   fill.style.width = '100%';
-  if (fillRect) fillRect.setAttribute('y', '24');
 }
 
 function startProcessingAnimation() {
@@ -227,13 +222,15 @@ function startProcessingAnimation() {
   el.style.opacity = '1';
   el.textContent = PROCESSING_MESSAGES[0];
   startProgressBar();
+
   processingInterval = setInterval(() => {
     i = (i + 1) % PROCESSING_MESSAGES.length;
     el.style.opacity = '0';
-    setTimeout(() => {
+    el.addEventListener('transitionend', function handler() {
+      el.removeEventListener('transitionend', handler);
       el.textContent = PROCESSING_MESSAGES[i];
       el.style.opacity = '1';
-    }, 450);
+    }, { once: true });
   }, 2800);
 }
 

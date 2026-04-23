@@ -440,14 +440,15 @@ html, body {
 }
 .tomato-loader {
   display: block;
-  animation: tomatoWobble 2.4s ease-in-out infinite;
-  transform-origin: 50% 90%;
+  animation: tomatoWobble 2.2s ease-in-out infinite;
+  transform-origin: 50% 100%;
 }
 @keyframes tomatoWobble {
-  0%, 100% { transform: rotate(0deg) scaleX(1); }
-  25%       { transform: rotate(-2.5deg) scaleX(0.97); }
-  50%       { transform: rotate(0deg) scaleX(1.03); }
-  75%       { transform: rotate(2.5deg) scaleX(0.97); }
+  0%, 100% { transform: rotate(0deg)   scaleY(1);    }
+  20%       { transform: rotate(-3deg)  scaleY(0.93); }
+  40%       { transform: rotate(0deg)   scaleY(1.05); }
+  60%       { transform: rotate(3deg)   scaleY(0.93); }
+  80%       { transform: rotate(0deg)   scaleY(1.03); }
 }
 .proc-h {
   font-size: 28px;
