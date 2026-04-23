@@ -104,7 +104,7 @@ def _add_overlay(img: Image.Image) -> Image.Image:
     line1 = "ЭКО-Культура —"
     line2 = "овощи которым я доверяю"
     text_area_w = w - text_x_start - PAD
-    slogan_size = max(11, int(strip_h * 0.19))
+    slogan_size = max(14, int(strip_h * 0.27))
     font_slogan = _load_font("Montserrat-Regular.ttf", slogan_size)
 
     b1 = draw.textbbox((0, 0), line1, font=font_slogan)
