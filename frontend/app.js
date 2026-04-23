@@ -314,24 +314,6 @@ document.getElementById('btn-download').addEventListener('click', async () => {
   URL.revokeObjectURL(url);
 });
 
-document.getElementById('btn-share').addEventListener('click', async () => {
-  const blob = await getCanvasBlob();
-  const file = new File([blob], 'eco-kultura-agronom.jpg', { type: 'image/jpeg' });
-
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: 'Я — агроном ЭКО Культуры!',
-        text: 'овощи, в которых уверен',
-      });
-    } catch (e) {
-      if (e.name !== 'AbortError') document.getElementById('btn-download').click();
-    }
-  } else {
-    document.getElementById('btn-download').click();
-  }
-});
 
 // ── Navigation ────────────────────────────────────────
 
@@ -351,22 +333,10 @@ document.getElementById('btn-error-retry').addEventListener('click', () => {
 });
 
 document.getElementById('btn-restart').addEventListener('click', () => {
-  resetUploadScreen();
-  selectedBaseId = null;
-  resultBlob     = null;
-  resultImg      = null;
-  baseImages     = [];
-
-  document.getElementById('proc-bg').src = '';
-  document.getElementById('featured-img').src = '';
-  const lbl = document.getElementById('featured-label');
-  if (lbl) lbl.textContent = '';
-
-  const canvas = document.getElementById('result-canvas');
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-
-
-  showScreen('screen-landing');
+  resultBlob = null;
+  resultImg  = null;
+  loadBaseImages();
+  showScreen('screen-choose');
 });
 
 startLandingSequence();
