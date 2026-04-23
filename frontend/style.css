@@ -435,22 +435,19 @@ html, body {
   justify-content: center;
   padding: 40px 32px;
 }
-.spin-wrap {
-  position: relative;
-  width: 120px; height: 120px;
-  margin-bottom: 36px;
+.tomato-wrap {
+  margin-bottom: 32px;
 }
-.spin-arc {
-  transform-origin: 60px 60px;
-  animation: spinRing 1.6s linear infinite;
+.tomato-loader {
+  display: block;
+  animation: tomatoWobble 2.4s ease-in-out infinite;
+  transform-origin: 50% 90%;
 }
-@keyframes spinRing { to { transform: rotate(360deg); } }
-.spin-inner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@keyframes tomatoWobble {
+  0%, 100% { transform: rotate(0deg) scaleX(1); }
+  25%       { transform: rotate(-2.5deg) scaleX(0.97); }
+  50%       { transform: rotate(0deg) scaleX(1.03); }
+  75%       { transform: rotate(2.5deg) scaleX(0.97); }
 }
 .proc-h {
   font-size: 28px;
@@ -467,7 +464,7 @@ html, body {
   text-align: center;
   line-height: 1.6;
   min-height: 22px;
-  transition: opacity 0.3s;
+  transition: opacity 0.35s ease;
 }
 .pbar-wrap {
   width: 100%;
@@ -479,11 +476,10 @@ html, body {
 }
 .pbar-fill {
   height: 100%;
+  width: 0%;
   border-radius: 4px;
   background: var(--lime);
-  animation: pbarAnim 2s ease-in-out infinite alternate;
 }
-@keyframes pbarAnim { from { width: 40%; } to { width: 80%; } }
 .ptime {
   margin-top: 10px;
   font-size: 11px;
