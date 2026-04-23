@@ -20,13 +20,16 @@ BASE_IMAGES_DIR = os.path.join(BASE_DIR, "assets", "base_images")
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
 
 BASE_IMAGES = {
-    "female_1": {"label": "Агроном-женщина 1", "file": "female_1.jpg"},
-    "female_2": {"label": "Агроном-женщина 2", "file": "female_2.png"},
-    "female_3": {"label": "Агроном-женщина 3", "file": "female_3.png"},
-    "female_4": {"label": "Агроном-женщина 4", "file": "female_4.png"},
-    "male_1":   {"label": "Агроном-мужчина 1", "file": "male_1.png"},
-    "male_2":   {"label": "Агроном-мужчина 2", "file": "male_2.png"},
-    "male_3":   {"label": "Агроном-мужчина 3", "file": "male_3.png"},
+    "female_1":   {"label": "Агроном-женщина 1", "file": "female_1.jpg"},
+    "female_2":   {"label": "Агроном-женщина 2", "file": "female_2.png"},
+    "female_3":   {"label": "Агроном-женщина 3", "file": "female_3.png"},
+    "female_4":   {"label": "Агроном-женщина 4", "file": "female_4.png"},
+    "agronom_1":  {"label": "Агроном-женщина 5", "file": "Agronom_1.png"},
+    "agronom_2":  {"label": "Агроном-женщина 6", "file": "Agronom_2.png"},
+    "male_1":     {"label": "Агроном-мужчина 1", "file": "male_1.png"},
+    "male_2":     {"label": "Агроном-мужчина 2", "file": "male_2.png"},
+    "male_3":     {"label": "Агроном-мужчина 3", "file": "male_3.png"},
+    "agronom_3":  {"label": "Агроном-мужчина 4", "file": "Agronom_3.png"},
 }
 
 MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp"}
