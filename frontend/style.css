@@ -51,8 +51,8 @@ html, body {
 }
 .land-grad-bot {
   position: absolute;
-  bottom: 0; left: 0; right: 0; height: 70%;
-  background: linear-gradient(0deg, rgba(10,30,12,0.9) 0%, rgba(10,30,12,0.4) 55%, transparent 100%);
+  bottom: 0; left: 0; right: 0; height: 75%;
+  background: linear-gradient(0deg, rgba(10,30,12,0.95) 0%, rgba(10,30,12,0.5) 50%, transparent 100%);
 }
 
 .land-top-bar {
@@ -61,7 +61,6 @@ html, body {
   z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 52px 22px 0;
 }
 
@@ -80,92 +79,60 @@ html, body {
   height: 46px;
 }
 
-/* Horizontal logo mark (legacy, kept for safety) */
-.logo-h {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.logo-h-text { display: flex; flex-direction: column; line-height: 1; }
-.lh-eco { font-size: 13px; font-weight: 900; color: var(--white); letter-spacing: -0.2px; line-height: 1; }
-.lh-k   { font-size: 7px;  font-weight: 700; color: var(--white); letter-spacing: 2px;   line-height: 1; }
-
-.logo-h.dark .lh-eco,
-.logo-h.dark .lh-k,
-.lh-eco.dark,
-.lh-k.dark { color: var(--dark); }
-
-/* Live badge */
-.live-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.85);
-}
-.live-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: #ff4444;
-  animation: blink 1.4s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-/* Landing bottom sheet */
-.land-sheet {
+/* Cinematic title sequence */
+.titles-wrap {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
+  left: 0; right: 0;
+  top: 42%;
   z-index: 2;
-  background: rgba(10,30,12,0.58);
-  backdrop-filter: blur(40px) saturate(1.4);
-  border-radius: 28px 28px 0 0;
-  box-shadow: 0 -4px 40px rgba(0,0,0,0.3);
-  padding: 8px 24px 40px;
+  pointer-events: none;
 }
-.land-h1 {
-  font-size: 32px;
-  font-weight: 900;
+.title-line {
+  position: absolute;
+  left: 0; right: 0;
+  text-align: center;
+  padding: 0 36px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
   color: var(--white);
-  line-height: 1.1;
-  letter-spacing: -1px;
-  margin-bottom: 10px;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  line-height: 1.25;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 40px rgba(0,0,0,0.75), 0 0 80px rgba(0,0,0,0.5);
+  opacity: 0;
 }
-.land-h1 .lime { color: var(--lime); }
-.land-p {
-  font-size: 14px;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.6;
-  margin-bottom: 20px;
+.title-line.title-in {
+  animation: titleIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-.pill-badges {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
+.title-line.title-out {
+  animation: titleOut 0.7s ease-in forwards;
 }
-.pbadge {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(125,194,66,0.2);
-  border: 1px solid rgba(125,194,66,0.3);
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--white);
+@keyframes titleIn {
+  0%   { opacity: 0; transform: translateY(44px) skewY(1.5deg); filter: blur(10px); }
+  55%  { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) skewY(0); filter: blur(0); }
 }
-.bdot {
-  width: 6px; height: 6px;
-  border-radius: 3px;
-  background: var(--lime);
-  flex-shrink: 0;
+@keyframes titleOut {
+  0%   { opacity: 1; transform: translateY(0); filter: blur(0); }
+  100% { opacity: 0; transform: translateY(-30px); filter: blur(10px); }
+}
+
+/* Landing CTA button */
+.land-btn-wrap {
+  position: absolute;
+  bottom: calc(44px + env(safe-area-inset-bottom, 0px));
+  left: 24px; right: 24px;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+.land-btn-wrap.visible {
+  animation: btnAppear 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: auto;
+}
+@keyframes btnAppear {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Handle */
@@ -176,6 +143,14 @@ html, body {
   margin: 0 auto 20px;
 }
 .handle.dark { background: rgba(28,66,32,0.12); }
+
+/* Dot badge (used in choose screen) */
+.bdot {
+  width: 6px; height: 6px;
+  border-radius: 3px;
+  background: var(--lime);
+  flex-shrink: 0;
+}
 
 /* ── Buttons ── */
 .btn {

@@ -14,6 +14,7 @@ let baseImages     = [];
 let resultBlob     = null;
 let resultImg      = null;
 let processingInterval = null;
+let landingTimers  = [];
 
 // ── Screens ──────────────────────────────────────────
 
@@ -21,6 +22,42 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
+  if (id === 'screen-landing') startLandingSequence();
+}
+
+// ── Landing cinematic sequence ────────────────────────
+
+function startLandingSequence() {
+  landingTimers.forEach(t => clearTimeout(t));
+  landingTimers = [];
+
+  ['title-1', 'title-2', 'title-3'].forEach(id => {
+    document.getElementById(id).className = 'title-line';
+  });
+  document.getElementById('land-btn-wrap').classList.remove('visible');
+
+  const sequence = [
+    { id: 'title-1', showAt: 3700, hideAt: 5700 },
+    { id: 'title-2', showAt: 5700, hideAt: 8700 },
+    { id: 'title-3', showAt: 8700, hideAt: 11700 },
+  ];
+
+  sequence.forEach(({ id, showAt, hideAt }) => {
+    landingTimers.push(setTimeout(() => {
+      const el = document.getElementById(id);
+      el.classList.remove('title-out');
+      el.classList.add('title-in');
+    }, showAt));
+    landingTimers.push(setTimeout(() => {
+      const el = document.getElementById(id);
+      el.classList.remove('title-in');
+      el.classList.add('title-out');
+    }, hideAt - 700));
+  });
+
+  landingTimers.push(setTimeout(() => {
+    document.getElementById('land-btn-wrap').classList.add('visible');
+  }, 11700));
 }
 
 // ── File / photo handling ─────────────────────────────
@@ -288,3 +325,5 @@ document.getElementById('btn-restart').addEventListener('click', () => {
 
   showScreen('screen-landing');
 });
+
+startLandingSequence();
