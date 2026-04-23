@@ -341,60 +341,6 @@ html, body {
 }
 .cancel-photo.hidden { display: none !important; }
 
-/* Tip sheet */
-.tip-sheet {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  z-index: 10;
-}
-.tip-sheet.hidden { display: none !important; }
-
-.tip-bg {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(2px);
-}
-.tip-box {
-  position: relative;
-  background: var(--white);
-  border-radius: 28px 28px 0 0;
-  padding: 8px 24px 44px;
-  box-shadow: 0 -8px 48px rgba(0,0,0,0.18);
-}
-.tip-h {
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--dark);
-  letter-spacing: -0.5px;
-  margin-bottom: 6px;
-}
-.tip-p {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-.tips-list { display: flex; flex-direction: column; margin-bottom: 8px; }
-.tip-row {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  padding: 10px 0;
-}
-.tip-em {
-  width: 44px; height: 44px;
-  border-radius: 22px;
-  background: rgba(125,194,66,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
 
 /* ─────────────────────────────────────────
    Screen 3 · Choose

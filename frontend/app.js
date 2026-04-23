@@ -108,18 +108,9 @@ btnCancelPhoto.addEventListener('click', e => {
   resetUploadScreen();
 });
 
-// ── Tip sheet (selfie tips) ───────────────────────────
+// ── Selfie button — open camera directly ─────────────
 
-document.getElementById('btn-selfie').addEventListener('click', () => {
-  document.getElementById('tip-sheet').classList.remove('hidden');
-});
-
-document.getElementById('tip-backdrop').addEventListener('click', () => {
-  document.getElementById('tip-sheet').classList.add('hidden');
-});
-
-document.getElementById('btn-tip-ok').addEventListener('click', () => {
-  document.getElementById('tip-sheet').classList.add('hidden');
+btnSelfie.addEventListener('click', () => {
   const cam = document.createElement('input');
   cam.type    = 'file';
   cam.accept  = 'image/*';
