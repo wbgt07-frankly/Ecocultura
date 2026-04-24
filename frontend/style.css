@@ -769,10 +769,10 @@ html, body {
 
 .carousel-wrap {
   flex: 1;
-  min-height: 0;
+  min-height: calc(74vw + 32px);
   width: 100%;
   overflow-x: scroll;
-  overflow-y: hidden;
+  overflow-y: visible;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
