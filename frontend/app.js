@@ -1,5 +1,65 @@
 'use strict';
 
+const BRAND_FACTS = [
+  'Томаты ЭКО-Культура проходят контроль качества и выращиваются без ГМО и нитратов. Именно поэтому их вкус и качество гарантирован.',
+];
+
+// ── Skeleton doc animation ────────────────
+const SKEL_WIDTHS = ['75%', '52%', '66%', '40%'];
+let skelTimers = [];
+
+function animateSkeleton() {
+  skelTimers.forEach(clearTimeout);
+  skelTimers = [];
+  const lines = document.querySelectorAll('.skel-line');
+  lines.forEach(l => { l.style.width = '0%'; l.classList.remove('sk-on'); });
+
+  function showLine(i) {
+    if (i >= lines.length) {
+      skelTimers.push(setTimeout(animateSkeleton, 900));
+      return;
+    }
+    lines[i].style.width = SKEL_WIDTHS[i];
+    lines[i].classList.add('sk-on');
+    skelTimers.push(setTimeout(() => showLine(i + 1), 420));
+  }
+  showLine(0);
+}
+
+function stopSkeleton() {
+  skelTimers.forEach(clearTimeout);
+  skelTimers = [];
+}
+
+// ── Typewriter ────────────────────────────
+let twTimer = null;
+
+function startTypewriter() {
+  clearTimeout(twTimer);
+  const el    = document.getElementById('fact-typed');
+  const fact  = BRAND_FACTS[Math.floor(Math.random() * BRAND_FACTS.length)];
+  el.textContent = '';
+  let i = 0;
+
+  return new Promise(resolve => {
+    function typeChar() {
+      if (i < fact.length) {
+        el.textContent += fact[i++];
+        setProgressBar(i / fact.length);
+        twTimer = setTimeout(typeChar, 68);
+      } else {
+        resolve();
+      }
+    }
+    typeChar();
+  });
+}
+
+function stopTypewriter() {
+  clearTimeout(twTimer);
+  twTimer = null;
+}
+
 let userPhotoFile   = null;
 let userName        = '';
 let selectedQuality = null;
@@ -34,33 +94,36 @@ function startLandingSequence() {
   landingTimers.forEach(t => clearTimeout(t));
   landingTimers = [];
 
-  ['title-1', 'title-2', 'title-3'].forEach(id => {
-    document.getElementById(id).className = 'title-line';
+  const blocks = ['ct-1', 'ct-2', 'ct-3', 'ct-4', 'ct-5'];
+  blocks.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('ct-show', 'ct-hide');
   });
   document.getElementById('land-btn-wrap').classList.remove('visible');
+  document.getElementById('land-cinema-overlay').classList.remove('intense');
 
-  const sequence = [
-    { id: 'title-1', showAt: 3700, hideAt: 5700 },
-    { id: 'title-2', showAt: 5700, hideAt: 8700 },
-    { id: 'title-3', showAt: 8700, hideAt: 11700 },
-  ];
+  const t  = (fn, ms) => landingTimers.push(setTimeout(fn, ms));
+  const show = id => document.getElementById(id).classList.add('ct-show');
+  const hide = id => {
+    const el = document.getElementById(id);
+    el.classList.remove('ct-show');
+    el.classList.add('ct-hide');
+  };
 
-  sequence.forEach(({ id, showAt, hideAt }) => {
-    landingTimers.push(setTimeout(() => {
-      const el = document.getElementById(id);
-      el.classList.remove('title-out');
-      el.classList.add('title-in');
-    }, showAt));
-    landingTimers.push(setTimeout(() => {
-      const el = document.getElementById(id);
-      el.classList.remove('title-in');
-      el.classList.add('title-out');
-    }, hideAt - 700));
-  });
-
-  landingTimers.push(setTimeout(() => {
+  const D = 3500;
+  t(() => show('ct-1'),                                              D);
+  t(() => hide('ct-1'),                                          D+3000);
+  t(() => show('ct-2'),                                          D+3400);
+  t(() => hide('ct-2'),                                          D+6700);
+  t(() => show('ct-3'),                                          D+7000);
+  t(() => hide('ct-3'),                                         D+10500);
+  t(() => { show('ct-4'); document.getElementById('land-cinema-overlay').classList.add('intense'); }, D+10800);
+  t(() => hide('ct-4'),                                         D+13200);
+  t(() => { document.getElementById('land-cinema-overlay').classList.remove('intense'); show('ct-5'); }, D+13500);
+  t(() => hide('ct-5'),                                         D+16800);
+  t(() => {
     document.getElementById('land-btn-wrap').classList.add('visible');
-  }, 11700));
+  }, D+17200);
 }
 
 // ── File / photo handling ─────────────────────────────
@@ -140,8 +203,8 @@ btnSelfie.addEventListener('click', () => {
 // ── Quality selection ─────────────────────────────────
 
 async function loadQualities() {
-  const grid = document.getElementById('quality-grid');
-  grid.innerHTML = '';
+  const carousel = document.getElementById('quality-carousel');
+  carousel.innerHTML = '';
   selectedQuality = null;
   document.getElementById('btn-generate').disabled = true;
 
@@ -150,18 +213,22 @@ async function loadQualities() {
     const qualities = await resp.json();
 
     qualities.forEach(q => {
-      const card = document.createElement('button');
+      const card = document.createElement('div');
       card.className = 'quality-card';
       card.dataset.id = q.id;
       card.innerHTML = `
-        <span class="qc-icon">${QUALITY_ICONS[q.id] || '🍅'}</span>
-        <span class="qc-label">${q.label}</span>
+        <img src="/quality-images/${q.id}.png" alt="${q.label}" loading="lazy">
+        <span class="qc-check">
+          <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+            <polyline points="3,9 7,13 15,5"/>
+          </svg>
+        </span>
       `;
       card.addEventListener('click', () => selectQuality(q.id));
-      grid.appendChild(card);
+      carousel.appendChild(card);
     });
   } catch {
-    grid.innerHTML = '<p class="emsg">Не удалось загрузить список качеств</p>';
+    carousel.innerHTML = '<p class="emsg">Не удалось загрузить список качеств</p>';
   }
 }
 
@@ -179,21 +246,17 @@ function startProgressBar() {
   const fill = document.querySelector('.pbar-fill');
   fill.style.transition = 'none';
   fill.style.width = '0%';
-  pbarStartTime = performance.now();
+}
 
-  function tick(now) {
-    const t = Math.min((now - pbarStartTime) / PBAR_DURATION_MS, 1);
-    const eased = 1 - Math.pow(1 - t, 3);
-    fill.style.width = (eased * 88) + '%';
-    if (t < 1) pbarRAF = requestAnimationFrame(tick);
-  }
-  pbarRAF = requestAnimationFrame(tick);
+function setProgressBar(ratio) {
+  const fill = document.querySelector('.pbar-fill');
+  fill.style.transition = 'none';
+  fill.style.width = (ratio * 100) + '%';
 }
 
 function completeProgressBar() {
-  if (pbarRAF) { cancelAnimationFrame(pbarRAF); pbarRAF = null; }
   const fill = document.querySelector('.pbar-fill');
-  fill.style.transition = 'width 0.5s ease-out';
+  fill.style.transition = 'width 0.4s ease-out';
   fill.style.width = '100%';
 }
 
@@ -201,7 +264,9 @@ function completeProgressBar() {
 
 async function doSwap() {
   showScreen('screen-processing');
-  startProgressBar();
+  startProgressBar();  // сбросить в 0
+  animateSkeleton();
+  const twDone = startTypewriter();
 
   const form = new FormData();
   form.append('user_photo', userPhotoFile);
@@ -219,9 +284,14 @@ async function doSwap() {
 
     resultBlob = await resp.blob();
     completeProgressBar();
+    stopSkeleton();
+    await twDone;           // ждём пока текст дочитается
+    stopTypewriter();
     await showResult(resultBlob);
 
   } catch (err) {
+    stopSkeleton();
+    stopTypewriter();
     completeProgressBar();
     document.getElementById('error-detail').textContent = err.message;
     showScreen('screen-error');

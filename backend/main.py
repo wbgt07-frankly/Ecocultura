@@ -15,9 +15,10 @@ import face_swap as fs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
-COVERS_DIR   = os.path.join(BASE_DIR, "assets", "cover")
-FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
+BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
+COVERS_DIR    = os.path.join(BASE_DIR, "assets", "cover")
+QUALITIES_DIR = os.path.join(COVERS_DIR, "qualities")
+FRONTEND_DIR  = os.path.join(os.path.dirname(BASE_DIR), "frontend")
 
 QUALITIES = {
     "juicy":   "Сочность",
@@ -108,4 +109,5 @@ async def swap(
         raise HTTPException(500, "Ошибка обработки. Попробуйте другое фото.")
 
 
+app.mount("/quality-images", StaticFiles(directory=QUALITIES_DIR), name="quality-images")
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="static")

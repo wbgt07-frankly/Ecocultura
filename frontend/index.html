@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#1C4220">
   <title>АгрономФото — ЭКО Культура</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=14">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
 
@@ -24,14 +24,33 @@
   <div class="land-top-bar">
     <img src="/Logotype.png" class="logo-img logo-img-light" alt="ЭКО Культура">
   </div>
+  <div class="land-cinema-overlay" id="land-cinema-overlay"></div>
   <div class="titles-wrap" id="titles-wrap">
-    <p class="title-line" id="title-1">Приветствуем тебя</p>
-    <p class="title-line" id="title-2">Приглашаем в наши<br>теплицы ЭКО-Культура</p>
-    <p class="title-line" id="title-3">Стань героем<br>обложки журнала!</p>
+    <div class="ct-block" id="ct-1">
+      <p>Не все понимают,</p>
+      <p>что такое настоящий вкус</p>
+    </div>
+    <div class="ct-block" id="ct-2">
+      <p>но <em class="acc-g">ты</em> отличаешь идеальный томат</p>
+      <p>с первого взгляда</p>
+    </div>
+    <div class="ct-block" id="ct-3">
+      <p class="ct-strong">твой выбор — это <em class="acc-g">стандарт качества</em></p>
+      <p>для всего урожая</p>
+    </div>
+    <div class="ct-block" id="ct-4">
+      <p class="ct-lone">И мы это заметили!</p>
+    </div>
+    <div class="ct-block" id="ct-5">
+      <p>сегодня</p>
+      <p class="ct-big"><em class="acc-r">ты</em> — <em class="acc-g">лицо новой обложки</em></p>
+      <p class="ct-brand"><span class="ct-brand-tomato">TOMATO</span> <span class="ct-brand-people">PEOPLE</span></p>
+      <img src="/covermagazine.png" class="ct-cover-img" alt="TOMATO PEOPLE">
+    </div>
   </div>
   <div class="land-btn-wrap" id="land-btn-wrap">
     <button class="btn lime" id="btn-start">
-      Зайти в теплицу
+      Создать свою обложку
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 10h12M12 5l5 5-5 5"/></svg>
     </button>
   </div>
@@ -48,7 +67,6 @@
   </div>
   <div class="s-body">
     <h2 class="s-title">Поделитесь Вашим селфи</h2>
-    <p class="s-sub">Должно быть хорошо видно лицо</p>
     <div class="upload-zone" id="upload-zone">
       <input type="file" id="file-input" accept="image/*" hidden>
       <div id="upload-placeholder" class="upload-ph">
@@ -89,11 +107,11 @@
     <div class="stepdots"><span class="sd done">✓</span><span class="sd on"></span><span class="sd"></span></div>
     <img src="/Logotype.png" class="logo-img" alt="ЭКО Культура">
   </div>
-  <div class="s-body">
+  <div class="s-body choose-body">
     <h2 class="s-title">Что ты ценишь в томатах?</h2>
-    <p class="s-sub">Выбери одно качество</p>
-    <div class="quality-grid" id="quality-grid"></div>
+    <p class="s-sub">Свайпай и выбери одно качество</p>
   </div>
+  <div class="carousel-wrap" id="quality-carousel"></div>
   <div class="s-foot">
     <button class="btn lime" id="btn-generate" disabled>
       Создать обложку
@@ -105,26 +123,17 @@
 <!-- ── Screen 4: Processing ──────────────────────────────────── -->
 <section id="screen-processing" class="screen proc-screen">
   <div class="proc-center">
-    <div class="tomato-wrap">
-      <svg class="tomato-loader" viewBox="0 0 100 110" width="100" height="110">
-        <circle cx="50" cy="65" r="36" fill="#D63B2F"/>
-        <ellipse cx="50" cy="46" rx="26" ry="16" fill="#E0503F" opacity="0.5"/>
-        <ellipse cx="38" cy="54" rx="8" ry="11" fill="rgba(255,255,255,0.15)" transform="rotate(-20 38 54)"/>
-        <circle cx="35" cy="50" r="3" fill="rgba(255,255,255,0.28)"/>
-        <line x1="50" y1="24" x2="50" y2="7" stroke="#2D7D1E" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M50 29 C43 22 43 12 50 7  C57 12 57 22 50 29 Z" fill="#44A828"/>
-        <path d="M50 29 C46 27 38 20 30 14 C36 19 44 26 50 29 Z" fill="#3A9820"/>
-        <path d="M50 29 C44 28 35 28 25 26 C35 29 44 31 50 29 Z" fill="#4AB82E"/>
-        <path d="M50 29 C54 27 62 20 70 14 C64 19 56 26 50 29 Z" fill="#3A9820"/>
-        <path d="M50 29 C56 28 65 28 75 26 C65 29 56 31 50 29 Z" fill="#4AB82E"/>
-      </svg>
+    <img src="/Logotype.png" class="proc-logo" alt="ЭКО Культура">
+    <div class="skel-doc" id="skel-doc">
+      <div class="skel-line" id="sk-0"></div>
+      <div class="skel-line" id="sk-1"></div>
+      <div class="skel-line" id="sk-2"></div>
+      <div class="skel-line" id="sk-3"></div>
     </div>
-    <h2 class="proc-h">Создаём твою обложку</h2>
     <div class="pbar-wrap"><div class="pbar-fill"></div></div>
-    <p class="ptime">Обычно 5–10 секунд</p>
     <div class="fact-card">
-      <div class="fact-lbl">ЗНАЕШЬ ЛИ ТЫ?</div>
-      <p class="fact-txt">Томаты ЭКО Культуры выращивают без ГМО и нитратов в теплицах по всей России</p>
+      <div class="fact-lbl">ЭКО-КУЛЬТУРА</div>
+      <p class="fact-txt" id="fact-txt"><span id="fact-typed"></span><span class="tw-cursor">|</span></p>
     </div>
   </div>
 </section>
@@ -160,6 +169,6 @@
   <button class="btn dark" id="btn-error-retry">Попробовать снова</button>
 </section>
 
-<script src="app.js?v=18"></script>
+<script src="app.js?v=19"></script>
 </body>
 </html>

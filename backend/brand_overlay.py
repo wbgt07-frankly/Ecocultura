@@ -20,8 +20,11 @@ FONT_URLS = {
     "Montserrat-Regular.ttf": (
         "https://raw.githubusercontent.com/google/fonts/main/ofl/montserrat/Montserrat%5Bwght%5D.ttf"
     ),
-    "DancingScript.ttf": (
-        "https://raw.githubusercontent.com/google/fonts/main/ofl/dancingscript/DancingScript%5Bwght%5D.ttf"
+    "MarckScript.ttf": (
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/marckscript/MarckScript-Regular.ttf"
+    ),
+    "OswaldBold.ttf": (
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/oswald/Oswald%5Bwght%5D.ttf"
     ),
 }
 
@@ -132,39 +135,72 @@ def _add_overlay(img: Image.Image) -> Image.Image:
 # ── v2: write user name on magazine cover ─────────────────────────
 
 # Name frame position (relative, calibrated for 1055×1491 covers)
-NAME_X_REL  = 0.157   # horizontal center of name frame
-NAME_Y_REL  = 0.905   # vertical center of name frame
-NAME_MAX_W  = 0.255   # max width of name as fraction of image width
+NAME_X_REL    = 0.05   # horizontal anchor (left edge of name)
+NAME_Y_REL    = 0.64   # vertical center of name
+NAME_MAX_W    = 0.55   # max width as fraction of image width
+NAME_TRACKING = -0.04  # letter spacing as fraction of font_size (negative = tighter)
+
+
+def _text_width_tracked(draw, text, font, tracking_px):
+    """Measure total width of text rendered with custom tracking."""
+    total = 0
+    for ch in text:
+        bb = draw.textbbox((0, 0), ch, font=font)
+        total += (bb[2] - bb[0]) + tracking_px
+    return total
 
 
 def write_name_on_cover(img_bytes: bytes, user_name: str) -> bytes:
     img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
     w, h = img.size
 
-    font_size = max(32, int(h * 0.034))
-    font = _load_font("DancingScript.ttf", font_size)
+    font_size = max(32, int(h * 0.115))
+    font = _load_font("OswaldBold.ttf", font_size)
 
-    draw = ImageDraw.Draw(img)
-    name = user_name.strip()
+    name = user_name.strip().upper()
+    tracking_px = int(font_size * NAME_TRACKING)
 
-    bb = draw.textbbox((0, 0), name, font=font)
-    tw = bb[2] - bb[0]
-    th = bb[3] - bb[1]
+    tmp_draw = ImageDraw.Draw(img)
+
+    # measure with tracking
+    tw = _text_width_tracked(tmp_draw, name, font, tracking_px)
+    bb0 = tmp_draw.textbbox((0, 0), name[0], font=font)
+    th = bb0[3] - bb0[1]
 
     max_px = int(w * NAME_MAX_W)
     if tw > max_px:
         font_size = int(font_size * max_px / tw)
-        font = _load_font("DancingScript.ttf", font_size)
-        bb = draw.textbbox((0, 0), name, font=font)
-        tw = bb[2] - bb[0]
-        th = bb[3] - bb[1]
+        font = _load_font("OswaldBold.ttf", font_size)
+        tracking_px = int(font_size * NAME_TRACKING)
+        tw = _text_width_tracked(tmp_draw, name, font, tracking_px)
+        bb0 = tmp_draw.textbbox((0, 0), name[0], font=font)
+        th = bb0[3] - bb0[1]
 
-    x = int(w * NAME_X_REL) - tw // 2
-    y = int(h * NAME_Y_REL) - th // 2
+    pad = int(font_size * 0.25)
+    layer_w = tw + pad * 2
+    layer_h = th + pad * 2
+    txt_layer = Image.new("RGBA", (layer_w, layer_h), (0, 0, 0, 0))
+    td = ImageDraw.Draw(txt_layer)
 
-    # subtle shadow for legibility
-    draw.text((x + 2, y + 2), name, font=font, fill=(0, 0, 0, 120))
-    draw.text((x, y), name, font=font, fill=(255, 220, 80))
+    # fixed vertical baseline from full string measurement
+    full_bb = td.textbbox((0, 0), name, font=font)
+    vert_off = full_bb[1]
+
+    # draw char by char with tracking — same vertical baseline for all chars
+    cx = pad
+    cy = pad
+    for ch in name:
+        bb = td.textbbox((0, 0), ch, font=font)
+        td.text((cx - bb[0] + 4, cy - vert_off + 4), ch, font=font, fill=(0, 0, 0, 130))
+        td.text((cx - bb[0], cy - vert_off), ch, font=font, fill=(255, 215, 60, 255))
+        cx += (bb[2] - bb[0]) + tracking_px
+
+    anchor_x = int(w * NAME_X_REL)
+    anchor_y = int(h * NAME_Y_REL) - txt_layer.height // 2
+
+    img_rgba = img.convert("RGBA")
+    img_rgba.paste(txt_layer, (anchor_x, anchor_y), txt_layer)
+    img = img_rgba.convert("RGB")
 
     out = io.BytesIO()
     img.save(out, format="JPEG", quality=92, optimize=True)
