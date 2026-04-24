@@ -1,20 +1,23 @@
 'use strict';
 
-const PROCESSING_MESSAGES = [
-  'Надеваем халат агронома...',
-  'Проверяем томаты...',
-  'Настраиваем освещение в теплице...',
-  'Готовим идеальный кадр...',
-  'Финальные штрихи...',
-];
+let userPhotoFile   = null;
+let userName        = '';
+let selectedQuality = null;
+let resultBlob      = null;
+let resultImg       = null;
+let pbarRAF         = null;
+let pbarStartTime   = 0;
+let landingTimers   = [];
 
-let userPhotoFile  = null;
-let selectedBaseId = null;
-let baseImages     = [];
-let resultBlob     = null;
-let resultImg      = null;
-let processingInterval = null;
-let landingTimers  = [];
+const PBAR_DURATION_MS = 12000;
+
+const QUALITY_ICONS = {
+  juicy:   '💧',
+  ripe:    '🍅',
+  quality: '⭐',
+  tasty:   '😋',
+  natural: '🌿',
+};
 
 // ── Screens ──────────────────────────────────────────
 
@@ -25,7 +28,7 @@ function showScreen(id) {
   if (id === 'screen-landing') startLandingSequence();
 }
 
-// ── Landing cinematic sequence ────────────────────────
+// ── Landing ───────────────────────────────────────────
 
 function startLandingSequence() {
   landingTimers.forEach(t => clearTimeout(t));
@@ -62,15 +65,17 @@ function startLandingSequence() {
 
 // ── File / photo handling ─────────────────────────────
 
-const uploadZone    = document.getElementById('upload-zone');
-const fileInput     = document.getElementById('file-input');
-const preview       = document.getElementById('photo-preview');
-const placeholder   = document.getElementById('upload-placeholder');
-const btnNextUpload = document.getElementById('btn-next-upload');
-const btnSelfie     = document.getElementById('btn-selfie');
+const uploadZone     = document.getElementById('upload-zone');
+const fileInput      = document.getElementById('file-input');
+const preview        = document.getElementById('photo-preview');
+const placeholder    = document.getElementById('upload-placeholder');
+const btnNextUpload  = document.getElementById('btn-next-upload');
+const btnSelfie      = document.getElementById('btn-selfie');
 const btnCancelPhoto = document.getElementById('btn-cancel-photo');
-const uploadMicro   = document.getElementById('upload-micro');
-const uploadFoot    = document.getElementById('upload-foot');
+const uploadMicro    = document.getElementById('upload-micro');
+const uploadFoot     = document.getElementById('upload-foot');
+const nameInputWrap  = document.getElementById('name-input-wrap');
+const inputName      = document.getElementById('input-name');
 
 function handlePhotoFile(file) {
   userPhotoFile = file;
@@ -82,13 +87,20 @@ function handlePhotoFile(file) {
     btnCancelPhoto.classList.remove('hidden');
     btnSelfie.classList.add('hidden');
     uploadMicro.classList.add('hidden');
+    nameInputWrap.classList.remove('hidden');
     uploadFoot.classList.remove('hidden');
+    checkUploadReady();
   };
   reader.readAsDataURL(file);
 }
 
+function checkUploadReady() {
+  btnNextUpload.disabled = !(userPhotoFile && inputName.value.trim().length > 0);
+}
+
 function resetUploadScreen() {
   userPhotoFile = null;
+  userName = '';
   fileInput.value = '';
   preview.src = '';
   preview.classList.add('hidden');
@@ -97,6 +109,9 @@ function resetUploadScreen() {
   uploadFoot.classList.add('hidden');
   btnSelfie.classList.remove('hidden');
   uploadMicro.classList.remove('hidden');
+  nameInputWrap.classList.add('hidden');
+  inputName.value = '';
+  btnNextUpload.disabled = true;
 }
 
 uploadZone.addEventListener('click', () => fileInput.click());
@@ -109,7 +124,7 @@ btnCancelPhoto.addEventListener('click', e => {
   resetUploadScreen();
 });
 
-// ── Selfie button — open camera directly ─────────────
+inputName.addEventListener('input', checkUploadReady);
 
 btnSelfie.addEventListener('click', () => {
   const cam = document.createElement('input');
@@ -122,77 +137,43 @@ btnSelfie.addEventListener('click', () => {
   cam.click();
 });
 
-// ── Carousel ──────────────────────────────────────────
+// ── Quality selection ─────────────────────────────────
 
-let currentSlide = 0;
-
-async function loadBaseImages() {
-  const noMsg = document.getElementById('no-images-msg');
-  const track = document.getElementById('carousel-track');
-  const dotsEl = document.getElementById('carousel-dots');
-
-  track.innerHTML = '';
-  dotsEl.innerHTML = '';
+async function loadQualities() {
+  const grid = document.getElementById('quality-grid');
+  grid.innerHTML = '';
+  selectedQuality = null;
+  document.getElementById('btn-generate').disabled = true;
 
   try {
-    const resp = await fetch('/api/base-images');
-    baseImages = await resp.json();
+    const resp = await fetch('/api/qualities');
+    const qualities = await resp.json();
 
-    if (!baseImages.length) {
-      noMsg.classList.remove('hidden');
-      return;
-    }
-
-    baseImages.forEach((img, i) => {
-      const slide = document.createElement('div');
-      slide.className = 'carousel-slide';
-      slide.innerHTML = `<img src="${img.thumb}" alt="${img.label}"><div class="carousel-slide-lbl">${img.label}</div>`;
-      track.appendChild(slide);
-
-      const dot = document.createElement('span');
-      dot.className = 'cdot';
-      dotsEl.appendChild(dot);
+    qualities.forEach(q => {
+      const card = document.createElement('button');
+      card.className = 'quality-card';
+      card.dataset.id = q.id;
+      card.innerHTML = `
+        <span class="qc-icon">${QUALITY_ICONS[q.id] || '🍅'}</span>
+        <span class="qc-label">${q.label}</span>
+      `;
+      card.addEventListener('click', () => selectQuality(q.id));
+      grid.appendChild(card);
     });
-
-    goToSlide(0);
-
   } catch {
-    noMsg.classList.remove('hidden');
+    grid.innerHTML = '<p class="emsg">Не удалось загрузить список качеств</p>';
   }
 }
 
-function goToSlide(index) {
-  currentSlide = Math.max(0, Math.min(index, baseImages.length - 1));
-  selectedBaseId = baseImages[currentSlide].id;
-  document.getElementById('carousel-track').style.transform = `translateX(-${currentSlide * 100}%)`;
-  document.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+function selectQuality(id) {
+  selectedQuality = id;
+  document.querySelectorAll('.quality-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.id === id);
+  });
   document.getElementById('btn-generate').disabled = false;
 }
 
-// Swipe listeners — set up once at page load
-(function initCarouselSwipe() {
-  const wrap = document.getElementById('carousel-wrap');
-  let startX = 0, startY = 0;
-
-  wrap.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-
-  wrap.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      goToSlide(currentSlide + (dx < 0 ? 1 : -1));
-    }
-  }, { passive: true });
-})();
-
 // ── Processing animation ──────────────────────────────
-
-let pbarRAF = null;
-let pbarStartTime = 0;
-const PBAR_DURATION_MS = 12000;
 
 function startProgressBar() {
   const fill = document.querySelector('.pbar-fill');
@@ -216,27 +197,16 @@ function completeProgressBar() {
   fill.style.width = '100%';
 }
 
-function startProcessingAnimation() {
-  startProgressBar();
-}
-
-function stopProcessingAnimation() {
-  clearInterval(processingInterval);
-  completeProgressBar();
-}
-
-// ── Face swap API call ────────────────────────────────
+// ── API call ──────────────────────────────────────────
 
 async function doSwap() {
-  const img = baseImages.find(i => i.id === selectedBaseId);
-  if (img) document.getElementById('proc-bg').src = img.thumb;
-
   showScreen('screen-processing');
-  startProcessingAnimation();
+  startProgressBar();
 
   const form = new FormData();
   form.append('user_photo', userPhotoFile);
-  form.append('base_id', selectedBaseId);
+  form.append('quality', selectedQuality);
+  form.append('user_name', userName);
 
   try {
     const resp = await fetch('/api/swap', { method: 'POST', body: form });
@@ -248,11 +218,11 @@ async function doSwap() {
     }
 
     resultBlob = await resp.blob();
-    stopProcessingAnimation();
+    completeProgressBar();
     await showResult(resultBlob);
 
   } catch (err) {
-    stopProcessingAnimation();
+    completeProgressBar();
     document.getElementById('error-detail').textContent = err.message;
     showScreen('screen-error');
   }
@@ -272,7 +242,6 @@ async function showResult(blob) {
   const canvas = document.getElementById('result-canvas');
   canvas.width  = resultImg.naturalWidth;
   canvas.height = resultImg.naturalHeight;
-
   drawResult();
   showScreen('screen-result');
 }
@@ -282,7 +251,6 @@ function drawResult() {
   const ctx    = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(resultImg, 0, 0);
-
 }
 
 // ── Download & Share ──────────────────────────────────
@@ -295,11 +263,11 @@ function getCanvasBlob() {
 
 document.getElementById('btn-download').addEventListener('click', async () => {
   const blob = await getCanvasBlob();
-  const file = new File([blob], 'eco-kultura-agronom.jpg', { type: 'image/jpeg' });
+  const file = new File([blob], 'tomato-people-cover.jpg', { type: 'image/jpeg' });
 
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
-      await navigator.share({ files: [file], title: 'Я — агроном ЭКО Культуры!' });
+      await navigator.share({ files: [file], title: 'Я — герой журнала TOMATO PEOPLE!' });
       return;
     } catch (e) {
       if (e.name === 'AbortError') return;
@@ -309,24 +277,25 @@ document.getElementById('btn-download').addEventListener('click', async () => {
   const url = URL.createObjectURL(blob);
   const a   = document.createElement('a');
   a.href     = url;
-  a.download = 'eco-kultura-agronom.jpg';
+  a.download = 'tomato-people-cover.jpg';
   a.click();
   URL.revokeObjectURL(url);
 });
-
 
 // ── Navigation ────────────────────────────────────────
 
 document.getElementById('btn-start').addEventListener('click', () => showScreen('screen-upload'));
 
 document.getElementById('btn-next-upload').addEventListener('click', () => {
-  loadBaseImages();
+  userName = inputName.value.trim();
+  loadQualities();
   showScreen('screen-choose');
 });
 
 document.getElementById('btn-back-upload').addEventListener('click', () => showScreen('screen-landing'));
 document.getElementById('btn-back-choose').addEventListener('click', () => showScreen('screen-upload'));
 document.getElementById('btn-generate').addEventListener('click', doSwap);
+
 document.getElementById('btn-error-retry').addEventListener('click', () => {
   resetUploadScreen();
   showScreen('screen-upload');
@@ -335,7 +304,8 @@ document.getElementById('btn-error-retry').addEventListener('click', () => {
 document.getElementById('btn-restart').addEventListener('click', () => {
   resultBlob = null;
   resultImg  = null;
-  loadBaseImages();
+  selectedQuality = null;
+  loadQualities();
   showScreen('screen-choose');
 });
 

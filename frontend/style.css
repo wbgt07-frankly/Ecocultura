@@ -634,3 +634,85 @@ html, body {
 
 /* ── Utils ── */
 .hidden { display: none !important; }
+
+/* ─────────────────────────────────────────
+   v2: Name input
+───────────────────────────────────────── */
+.name-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+  width: 100%;
+}
+.name-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark);
+  letter-spacing: 0.03em;
+}
+.name-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #dde5d0;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: var(--dark);
+  background: #f8faf5;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.name-input:focus {
+  border-color: var(--lime);
+  background: #fff;
+}
+.name-input::placeholder { color: #b0bca0; }
+
+/* ─────────────────────────────────────────
+   v2: Quality grid
+───────────────────────────────────────── */
+.quality-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+.quality-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 12px;
+  border-radius: 16px;
+  border: 2px solid #dde5d0;
+  background: #f8faf5;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: 'Montserrat', sans-serif;
+}
+.quality-card:active { transform: scale(0.97); }
+.quality-card.selected {
+  border-color: var(--lime);
+  background: #edf7e0;
+  box-shadow: 0 0 0 3px rgba(125,194,66,0.18);
+}
+.qc-icon { font-size: 32px; line-height: 1; }
+.qc-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: 0.02em;
+}
+
+/* last card centered if odd */
+.quality-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  max-width: 180px;
+  margin: 0 auto;
+  width: 100%;
+}

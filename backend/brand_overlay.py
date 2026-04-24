@@ -20,6 +20,9 @@ FONT_URLS = {
     "Montserrat-Regular.ttf": (
         "https://raw.githubusercontent.com/google/fonts/main/ofl/montserrat/Montserrat%5Bwght%5D.ttf"
     ),
+    "DancingScript.ttf": (
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/dancingscript/DancingScript%5Bwght%5D.ttf"
+    ),
 }
 
 
@@ -124,3 +127,45 @@ def _add_overlay(img: Image.Image) -> Image.Image:
     img_rgba = img.convert("RGBA")
     result = Image.alpha_composite(img_rgba, overlay)
     return result.convert("RGB")
+
+
+# ── v2: write user name on magazine cover ─────────────────────────
+
+# Name frame position (relative, calibrated for 1055×1491 covers)
+NAME_X_REL  = 0.157   # horizontal center of name frame
+NAME_Y_REL  = 0.905   # vertical center of name frame
+NAME_MAX_W  = 0.255   # max width of name as fraction of image width
+
+
+def write_name_on_cover(img_bytes: bytes, user_name: str) -> bytes:
+    img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+    w, h = img.size
+
+    font_size = max(32, int(h * 0.034))
+    font = _load_font("DancingScript.ttf", font_size)
+
+    draw = ImageDraw.Draw(img)
+    name = user_name.strip()
+
+    bb = draw.textbbox((0, 0), name, font=font)
+    tw = bb[2] - bb[0]
+    th = bb[3] - bb[1]
+
+    max_px = int(w * NAME_MAX_W)
+    if tw > max_px:
+        font_size = int(font_size * max_px / tw)
+        font = _load_font("DancingScript.ttf", font_size)
+        bb = draw.textbbox((0, 0), name, font=font)
+        tw = bb[2] - bb[0]
+        th = bb[3] - bb[1]
+
+    x = int(w * NAME_X_REL) - tw // 2
+    y = int(h * NAME_Y_REL) - th // 2
+
+    # subtle shadow for legibility
+    draw.text((x + 2, y + 2), name, font=font, fill=(0, 0, 0, 120))
+    draw.text((x, y), name, font=font, fill=(255, 220, 80))
+
+    out = io.BytesIO()
+    img.save(out, format="JPEG", quality=92, optimize=True)
+    return out.getvalue()

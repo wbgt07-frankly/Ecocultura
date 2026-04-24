@@ -62,6 +62,24 @@ def init_models():
     logger.info("Модели готовы")
 
 
+def detect_gender(user_img_bytes: bytes) -> str:
+    if _analyzer is None:
+        init_models()
+    user_arr = np.frombuffer(user_img_bytes, np.uint8)
+    user_img = cv2.imdecode(user_arr, cv2.IMREAD_COLOR)
+    if user_img is None:
+        return 'male'
+    faces = _analyzer.get(user_img)
+    if not faces:
+        return 'male'
+    face = sorted(faces, key=lambda f: (f.bbox[2]-f.bbox[0])*(f.bbox[3]-f.bbox[1]), reverse=True)[0]
+    if hasattr(face, 'sex'):
+        return 'male' if face.sex == 'M' else 'female'
+    if hasattr(face, 'gender'):
+        return 'male' if face.gender == 1 else 'female'
+    return 'male'
+
+
 def swap_face(user_img_bytes: bytes, base_img_path: str) -> bytes:
     if _analyzer is None or _swapper is None:
         init_models()
@@ -102,4 +120,11 @@ def swap_face(user_img_bytes: bytes, base_img_path: str) -> bytes:
     result = _swapper.get(result, base_face, user_face, paste_back=True)
 
     _, buffer = cv2.imencode(".jpg", result, [cv2.IMWRITE_JPEG_QUALITY, 92])
-    return buffer.tobytes()
+
+    gender = 'male'
+    if hasattr(user_face, 'sex'):
+        gender = 'male' if user_face.sex == 'M' else 'female'
+    elif hasattr(user_face, 'gender'):
+        gender = 'male' if user_face.gender == 1 else 'female'
+
+    return buffer.tobytes(), gender

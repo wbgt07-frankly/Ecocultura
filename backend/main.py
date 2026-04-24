@@ -15,24 +15,17 @@ import face_swap as fs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_IMAGES_DIR = os.path.join(BASE_DIR, "assets", "base_images")
+BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
+COVERS_DIR   = os.path.join(BASE_DIR, "assets", "cover")
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
 
-BASE_IMAGES = {
-    "female_1":   {"label": "Агроном-женщина 1", "file": "female_1.jpg"},
-    "female_2":   {"label": "Агроном-женщина 2", "file": "female_2.png"},
-    "female_3":   {"label": "Агроном-женщина 3", "file": "female_3.png"},
-    "female_4":   {"label": "Агроном-женщина 4", "file": "female_4.png"},
-    "agronom_1":  {"label": "Агроном-женщина 5", "file": "Agronom_1.png"},
-    "agronom_2":  {"label": "Агроном-женщина 6", "file": "Agronom_2.png"},
-    "male_1":     {"label": "Агроном-мужчина 1", "file": "male_1.png"},
-    "male_2":     {"label": "Агроном-мужчина 2", "file": "male_2.png"},
-    "male_3":     {"label": "Агроном-мужчина 3", "file": "male_3.png"},
-    "agronom_3":  {"label": "Агроном-мужчина 4", "file": "Agronom_3.png"},
+QUALITIES = {
+    "juicy":   "Сочность",
+    "ripe":    "Спелость",
+    "quality": "Качество",
+    "tasty":   "Вкус",
+    "natural": "Состав",
 }
-
-MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp"}
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_SIZE = 10 * 1024 * 1024  # 10 MB
@@ -54,44 +47,41 @@ app.add_middleware(
 )
 
 
-@app.get("/api/base-images")
-async def get_base_images():
-    result = []
-    for key, info in BASE_IMAGES.items():
-        path = os.path.join(BASE_IMAGES_DIR, info["file"])
-        if os.path.exists(path):
-            result.append({"id": key, "label": info["label"], "thumb": f"/api/thumb/{key}"})
-    return result
+@app.get("/api/qualities")
+async def get_qualities():
+    return [{"id": k, "label": v} for k, v in QUALITIES.items()]
 
 
 _thumb_cache: dict[str, bytes] = {}
 
-@app.get("/api/thumb/{image_id}")
-async def get_thumb(image_id: str):
-    if image_id not in BASE_IMAGES:
+@app.get("/api/thumb/{quality}/{gender}")
+async def get_thumb(quality: str, gender: str):
+    if quality not in QUALITIES or gender not in ("male", "female"):
         raise HTTPException(404)
-    if image_id in _thumb_cache:
-        return Response(content=_thumb_cache[image_id], media_type="image/jpeg",
+    key = f"{quality}_{gender}"
+    if key in _thumb_cache:
+        return Response(content=_thumb_cache[key], media_type="image/jpeg",
                         headers={"Cache-Control": "public, max-age=86400"})
-    path = os.path.join(BASE_IMAGES_DIR, BASE_IMAGES[image_id]["file"])
+    path = os.path.join(COVERS_DIR, f"{key}.png")
     if not os.path.exists(path):
         raise HTTPException(404)
     img = Image.open(path).convert("RGB")
-    img.thumbnail((600, 1200), Image.LANCZOS)
+    img.thumbnail((400, 600), Image.LANCZOS)
     buf = io.BytesIO()
-    img.save(buf, format="JPEG", quality=82, optimize=True)
-    _thumb_cache[image_id] = buf.getvalue()
-    return Response(content=_thumb_cache[image_id], media_type="image/jpeg",
+    img.save(buf, format="JPEG", quality=80, optimize=True)
+    _thumb_cache[key] = buf.getvalue()
+    return Response(content=_thumb_cache[key], media_type="image/jpeg",
                     headers={"Cache-Control": "public, max-age=86400"})
 
 
 @app.post("/api/swap")
 async def swap(
     user_photo: UploadFile = File(...),
-    base_id: str = Form(...),
+    quality: str = Form(...),
+    user_name: str = Form(...),
 ):
-    if base_id not in BASE_IMAGES:
-        raise HTTPException(400, "Неверный образ")
+    if quality not in QUALITIES:
+        raise HTTPException(400, "Неверное качество")
 
     if user_photo.content_type not in ALLOWED_TYPES:
         raise HTTPException(400, "Формат не поддерживается. Используйте JPEG, PNG или WebP.")
@@ -100,12 +90,17 @@ async def swap(
     if len(contents) > MAX_SIZE:
         raise HTTPException(400, "Файл слишком большой. Максимум 10 МБ.")
 
-    base_path = os.path.join(BASE_IMAGES_DIR, BASE_IMAGES[base_id]["file"])
-
     try:
-        result = fs.swap_face(contents, base_path)
-        result = bo.process_result(result)
-        return Response(content=result, media_type="image/jpeg")
+        gender = fs.detect_gender(contents)
+
+        cover_path = os.path.join(COVERS_DIR, f"{quality}_{gender}.png")
+        if not os.path.exists(cover_path):
+            cover_path = os.path.join(COVERS_DIR, f"{quality}_male.png")
+
+        result_bytes, _ = fs.swap_face(contents, cover_path)
+        final = bo.write_name_on_cover(result_bytes, user_name)
+        return Response(content=final, media_type="image/jpeg")
+
     except ValueError as e:
         raise HTTPException(422, str(e))
     except Exception as e:

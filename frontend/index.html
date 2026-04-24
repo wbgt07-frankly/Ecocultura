@@ -7,7 +7,7 @@
   <title>АгрономФото — ЭКО Культура</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
   <div class="land-bg">
     <video class="land-bg-img" autoplay muted loop playsinline>
       <source src="/startvideo.mp4" type="video/mp4">
-      <img src="/api/thumb/female_1" class="land-bg-img" alt="" onerror="this.style.opacity=0">
+      <img src="/api/thumb/juicy/female" class="land-bg-img" alt="" onerror="this.style.opacity=0">
     </video>
     <div class="land-grad-top"></div>
     <div class="land-grad-bot"></div>
@@ -27,7 +27,7 @@
   <div class="titles-wrap" id="titles-wrap">
     <p class="title-line" id="title-1">Приветствуем тебя</p>
     <p class="title-line" id="title-2">Приглашаем в наши<br>теплицы ЭКО-Культура</p>
-    <p class="title-line" id="title-3">Примерь на себя<br>форму агронома!</p>
+    <p class="title-line" id="title-3">Стань героем<br>обложки журнала!</p>
   </div>
   <div class="land-btn-wrap" id="land-btn-wrap">
     <button class="btn lime" id="btn-start">
@@ -67,15 +67,20 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       Сделать селфи
     </button>
+
+    <div class="name-input-wrap hidden" id="name-input-wrap">
+      <label class="name-label" for="input-name">Как тебя зовут?</label>
+      <input class="name-input" type="text" id="input-name" placeholder="Введи своё имя" maxlength="30" autocomplete="given-name">
+    </div>
+
     <p class="micro dark" id="upload-micro">Мы не храним Ваши фотографии</p>
   </div>
   <div class="s-foot hidden" id="upload-foot">
-    <button class="btn dark" id="btn-next-upload">Далее →</button>
+    <button class="btn dark" id="btn-next-upload" disabled>Далее →</button>
   </div>
-
 </section>
 
-<!-- ── Screen 3: Choose character ────────────────────────────── -->
+<!-- ── Screen 3: Choose quality ───────────────────────────────── -->
 <section id="screen-choose" class="screen white-s">
   <div class="s-head">
     <button class="back-btn" id="btn-back-choose">
@@ -85,17 +90,13 @@
     <img src="/Logotype.png" class="logo-img" alt="ЭКО Культура">
   </div>
   <div class="s-body">
-    <h2 class="s-title">Выбери образ</h2>
-    <p class="s-sub">Листай влево или вправо</p>
-    <div class="carousel-wrap" id="carousel-wrap">
-      <div class="carousel-track" id="carousel-track"></div>
-    </div>
-    <div class="carousel-dots" id="carousel-dots"></div>
-    <div id="no-images-msg" class="hidden emsg">Базовые изображения не найдены.<br>Добавьте файлы в <code>backend/assets/base_images/</code></div>
+    <h2 class="s-title">Что ты ценишь в томатах?</h2>
+    <p class="s-sub">Выбери одно качество</p>
+    <div class="quality-grid" id="quality-grid"></div>
   </div>
   <div class="s-foot">
     <button class="btn lime" id="btn-generate" disabled>
-      Создать фото
+      Создать обложку
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 10h12M12 5l5 5-5 5"/></svg>
     </button>
   </div>
@@ -103,18 +104,14 @@
 
 <!-- ── Screen 4: Processing ──────────────────────────────────── -->
 <section id="screen-processing" class="screen proc-screen">
-  <img id="proc-bg" class="proc-bg" src="" alt="">
   <div class="proc-center">
     <div class="tomato-wrap">
       <svg class="tomato-loader" viewBox="0 0 100 110" width="100" height="110">
-        <!-- body -->
         <circle cx="50" cy="65" r="36" fill="#D63B2F"/>
         <ellipse cx="50" cy="46" rx="26" ry="16" fill="#E0503F" opacity="0.5"/>
         <ellipse cx="38" cy="54" rx="8" ry="11" fill="rgba(255,255,255,0.15)" transform="rotate(-20 38 54)"/>
         <circle cx="35" cy="50" r="3" fill="rgba(255,255,255,0.28)"/>
-        <!-- stem -->
         <line x1="50" y1="24" x2="50" y2="7" stroke="#2D7D1E" stroke-width="3.5" stroke-linecap="round"/>
-        <!-- calyx leaves — wider filled shapes -->
         <path d="M50 29 C43 22 43 12 50 7  C57 12 57 22 50 29 Z" fill="#44A828"/>
         <path d="M50 29 C46 27 38 20 30 14 C36 19 44 26 50 29 Z" fill="#3A9820"/>
         <path d="M50 29 C44 28 35 28 25 26 C35 29 44 31 50 29 Z" fill="#4AB82E"/>
@@ -122,7 +119,7 @@
         <path d="M50 29 C56 28 65 28 75 26 C65 29 56 31 50 29 Z" fill="#4AB82E"/>
       </svg>
     </div>
-    <h2 class="proc-h">Создаём твоё фото</h2>
+    <h2 class="proc-h">Создаём твою обложку</h2>
     <div class="pbar-wrap"><div class="pbar-fill"></div></div>
     <p class="ptime">Обычно 5–10 секунд</p>
     <div class="fact-card">
@@ -140,7 +137,7 @@
   </div>
   <div class="res-sheet">
     <div class="handle"></div>
-    <h2 class="rs-h">Твоё фото готово!</h2>
+    <h2 class="rs-h">Твоя обложка готова!</h2>
     <p class="rs-p">Сохрани или поделись с друзьями</p>
     <button class="btn lime" id="btn-download">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v13M5 14l7 7 7-7"/></svg>
@@ -163,6 +160,6 @@
   <button class="btn dark" id="btn-error-retry">Попробовать снова</button>
 </section>
 
-<script src="app.js?v=17"></script>
+<script src="app.js?v=18"></script>
 </body>
 </html>
