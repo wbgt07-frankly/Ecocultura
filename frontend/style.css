@@ -790,7 +790,7 @@ html, body {
   flex-shrink: 0;
   width: 74vw;
   max-width: 300px;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1 / 1;
   scroll-snap-align: center;
   border-radius: 20px;
   overflow: hidden;
