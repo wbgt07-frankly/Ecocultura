@@ -769,7 +769,7 @@ html, body {
 
 .carousel-wrap {
   flex: 1;
-  min-height: calc(74vw + 32px);
+  min-height: calc(63vw + 32px);
   width: 100%;
   overflow-x: scroll;
   overflow-y: visible;
@@ -780,16 +780,16 @@ html, body {
   align-items: center;
   gap: 12px;
   padding: 8px 0 16px;
-  padding-left: calc(50% - 37vw);
-  padding-right: calc(50% - 37vw);
+  padding-left: calc(50% - 31.5vw);
+  padding-right: calc(50% - 31.5vw);
   box-sizing: border-box;
 }
 .carousel-wrap::-webkit-scrollbar { display: none; }
 
 .quality-card {
   flex-shrink: 0;
-  width: 74vw;
-  max-width: 300px;
+  width: 63vw;
+  max-width: 255px;
   aspect-ratio: 1 / 1;
   scroll-snap-align: center;
   border-radius: 20px;
