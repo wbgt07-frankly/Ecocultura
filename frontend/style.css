@@ -510,7 +510,7 @@ html, body {
   padding: 40px 32px;
 }
 .proc-logo {
-  height: 81px;
+  height: 113px;
   width: auto;
   margin-bottom: 32px;
 }
@@ -799,7 +799,7 @@ html, body {
 .quality-card img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 .quality-card .qc-check {
