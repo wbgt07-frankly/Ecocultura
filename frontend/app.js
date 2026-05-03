@@ -79,6 +79,14 @@ const QUALITY_ICONS = {
   natural: '🌿',
 };
 
+const FALLBACK_QUALITIES = [
+  { id: 'juicy', label: 'Сочность' },
+  { id: 'ripe', label: 'Спелость' },
+  { id: 'quality', label: 'Качество' },
+  { id: 'tasty', label: 'Вкус' },
+  { id: 'natural', label: 'Состав' },
+];
+
 // ── Screens ──────────────────────────────────────────
 
 function showScreen(id) {
@@ -93,6 +101,7 @@ function showScreen(id) {
 function startLandingSequence() {
   landingTimers.forEach(t => clearTimeout(t));
   landingTimers = [];
+  ensureLandingVideo();
 
   const blocks = ['ct-1', 'ct-2', 'ct-3', 'ct-4', 'ct-5'];
   blocks.forEach(id => {
@@ -124,6 +133,21 @@ function startLandingSequence() {
   t(() => {
     document.getElementById('land-btn-wrap').classList.add('visible');
   }, D+17200);
+}
+
+function ensureLandingVideo() {
+  const video = document.getElementById('landing-video');
+  if (!video) return;
+
+  video.muted = true;
+  video.playsInline = true;
+
+  const playAttempt = video.play();
+  if (playAttempt && typeof playAttempt.catch === 'function') {
+    playAttempt.catch(() => {
+      video.controls = false;
+    });
+  }
 }
 
 // ── File / photo handling ─────────────────────────────
@@ -210,14 +234,16 @@ async function loadQualities() {
 
   try {
     const resp = await fetch('/api/qualities');
+    if (!resp.ok) throw new Error('qualities request failed');
     const qualities = await resp.json();
+    if (!Array.isArray(qualities) || qualities.length === 0) throw new Error('empty qualities');
 
     qualities.forEach(q => {
       const card = document.createElement('div');
       card.className = 'quality-card';
       card.dataset.id = q.id;
       card.innerHTML = `
-        <img src="/quality-images/${q.id}.png" alt="${q.label}" loading="lazy">
+        <img src="/api/quality-image/${q.id}" alt="${q.label}" decoding="async" onerror="this.onerror=null;this.src='/quality-images/${q.id}.png'">
         <span class="qc-check">
           <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
             <polyline points="3,9 7,13 15,5"/>
@@ -228,7 +254,21 @@ async function loadQualities() {
       carousel.appendChild(card);
     });
   } catch {
-    carousel.innerHTML = '<p class="emsg">Не удалось загрузить список качеств</p>';
+    FALLBACK_QUALITIES.forEach(q => {
+      const card = document.createElement('div');
+      card.className = 'quality-card';
+      card.dataset.id = q.id;
+      card.innerHTML = `
+        <img src="/quality-images/${q.id}.png" alt="${q.label}" decoding="async">
+        <span class="qc-check">
+          <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+            <polyline points="3,9 7,13 15,5"/>
+          </svg>
+        </span>
+      `;
+      card.addEventListener('click', () => selectQuality(q.id));
+      carousel.appendChild(card);
+    });
   }
 }
 

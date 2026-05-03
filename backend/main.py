@@ -1,11 +1,12 @@
 import io
 import os
 import logging
+import re
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
@@ -30,6 +31,7 @@ QUALITIES = {
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_SIZE = 10 * 1024 * 1024  # 10 MB
+VIDEO_PATH = os.path.join(FRONTEND_DIR, "startvideo.mp4")
 
 
 @asynccontextmanager
@@ -54,6 +56,84 @@ async def get_qualities():
 
 
 _thumb_cache: dict[str, bytes] = {}
+_quality_image_cache: dict[str, bytes] = {}
+
+
+@app.head("/startvideo.mp4")
+@app.get("/startvideo.mp4")
+async def get_start_video(request: Request):
+    if not os.path.exists(VIDEO_PATH):
+        raise HTTPException(404)
+
+    file_size = os.path.getsize(VIDEO_PATH)
+    range_header = request.headers.get("range")
+    headers = {
+        "Accept-Ranges": "bytes",
+        "Cache-Control": "public, max-age=86400",
+    }
+
+    if not range_header:
+        return FileResponse(VIDEO_PATH, media_type="video/mp4", headers=headers)
+
+    match = re.match(r"bytes=(\d*)-(\d*)$", range_header)
+    if not match:
+        return Response(status_code=416, headers={**headers, "Content-Range": f"bytes */{file_size}"})
+
+    start_s, end_s = match.groups()
+    if start_s:
+        start = int(start_s)
+        end = int(end_s) if end_s else file_size - 1
+    else:
+        suffix_len = int(end_s) if end_s else 0
+        start = max(file_size - suffix_len, 0)
+        end = file_size - 1
+
+    if start >= file_size or end < start:
+        return Response(status_code=416, headers={**headers, "Content-Range": f"bytes */{file_size}"})
+
+    end = min(end, file_size - 1)
+    chunk_size = end - start + 1
+    with open(VIDEO_PATH, "rb") as video:
+        video.seek(start)
+        data = video.read(chunk_size)
+
+    return Response(
+        content=data,
+        status_code=206,
+        media_type="video/mp4",
+        headers={
+            **headers,
+            "Content-Range": f"bytes {start}-{end}/{file_size}",
+            "Content-Length": str(chunk_size),
+        },
+    )
+
+
+@app.get("/api/quality-image/{quality}")
+async def get_quality_image(quality: str):
+    if quality not in QUALITIES:
+        raise HTTPException(404)
+    if quality in _quality_image_cache:
+        return Response(
+            content=_quality_image_cache[quality],
+            media_type="image/jpeg",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
+
+    path = os.path.join(QUALITIES_DIR, f"{quality}.png")
+    if not os.path.exists(path):
+        raise HTTPException(404)
+
+    img = Image.open(path).convert("RGB")
+    img.thumbnail((720, 960), Image.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=84, optimize=True)
+    _quality_image_cache[quality] = buf.getvalue()
+    return Response(
+        content=_quality_image_cache[quality],
+        media_type="image/jpeg",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
 
 @app.get("/api/thumb/{quality}/{gender}")
 async def get_thumb(quality: str, gender: str):
